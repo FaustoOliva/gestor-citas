@@ -1,11 +1,28 @@
 import '../App.css';
 
 
-function listado() {
+function listado(props ) {
     return (
         <div class="one-half column">
             <h2>Administra tus citas</h2>
-            <div class="cita"><p>Mascota: <span>Nina</span></p><p>Dueño: <span>Martin</span></p><p>Fecha: <span>2021-08-05</span></p><p>Hora: <span>08:20</span></p><p>Sintomas: <span>Le duele la pierna</span></p><button class="button elimnar u-full-width">Eliminar ×</button></div>
+            <div class="cita">
+                <p>Mascota:
+                    <span> {props.nombreM}</span>
+                </p>
+                <p>Dueño:
+                    <span> {props.nombreD}</span>
+                </p>
+                <p>Fecha:
+                    <span> {props.fecha}</span>
+                </p>
+                <p>Hora:
+                    <span> {props.hora}</span>
+                </p>
+                <p>Sintomas:
+                    <span> {props.sintomas}</span>
+                </p>
+                <button class="button elimnar u-full-width">Eliminar ×</button>
+            </div>
         </div>
     );
 }
