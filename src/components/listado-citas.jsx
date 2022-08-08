@@ -1,16 +1,18 @@
 import React from 'react';
+import Cita from './cita.jsx'
 
-
-const listaCitas=[];
-
-export function listado(props) {
-    const cita={
-        mascota: props.mascota,
-        dueno: props.dueno,
-        fecha: props.fecha,
-        hora: props.hora,
-        sintomas: props.sintomas
-    }
-    listaCitas.push(cita);
-    console.log(cita)
-};
+export default function ListadoCitas({ citas, setCitas }) {
+    return (
+    {citas.map((cita, i) => <Cita
+    {...cita}
+    delete={() => {
+    const copy = [...citas]
+    copy.splice(i, 1)
+    console.log(copy)
+    setCitas(copy)
+    }}
+    key={i}
+    />)}
+   
+    )
+}

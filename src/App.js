@@ -9,26 +9,26 @@ import Row from 'react-bootstrap/Row'
 
 
 function App() {
-  const [cita, setCita] = useState([]);
+  const [cita, setCita] = useState([])
 
-  const addCita = (contactInfo) => {
-    setCita([...cita, contactInfo]);
+  const addCita = (citaInfo) => {
+    setCita([...cita, citaInfo]);
   }
   console.log(cita)
-  return(
-  <><div>
-    <h1 class="hola">Administrador de pacientes</h1>
-  </div><Container>
-      <Row>
-        <Col>
-          <Formulario addCita={addCita}/>
-        </Col>
-        <Col>
-          <Cita cita={cita}/>
-        </Col>
-      </Row>
-    </Container></>
-)
+  return (
+    <><div>
+      <h1 class="hola">Administrador de pacientes</h1>
+    </div><Container>
+        <Row>
+          <Col>
+            <Formulario addCita={addCita} />
+          </Col>
+          <Col>
+            <Listado {...cita, setCita} />
+          </Col>
+        </Row>
+      </Container></>
+  )
 };
 
 export default App;
