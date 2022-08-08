@@ -1,25 +1,26 @@
 import '../App.css';
 
 
-function listado(props ) {
+function cita({cita}) {
+    console.log(cita)
     return (
         <div class="one-half column">
             <h2>Administra tus citas</h2>
             <div class="cita">
                 <p>Mascota:
-                    <span> {props.nombreM}</span>
+                    <span> {cita.nombreM}</span>
                 </p>
                 <p>Dueño:
-                    <span> {props.nombreD}</span>
+                    <span> {cita.nombreD}</span>
                 </p>
                 <p>Fecha:
-                    <span> {props.fecha}</span>
+                    <span> {cita.fecha}</span>
                 </p>
                 <p>Hora:
-                    <span> {props.hora}</span>
+                    <span> {cita.hora}</span>
                 </p>
                 <p>Sintomas:
-                    <span> {props.sintomas}</span>
+                    <span> {cita.sintomas}</span>
                 </p>
                 <button class="button elimnar u-full-width">Eliminar ×</button>
             </div>
@@ -27,4 +28,4 @@ function listado(props ) {
     );
 }
 
-export default listado;
+export default cita;

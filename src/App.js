@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useState } from 'react';
 import './App.css';
 import Cita from './components/cita'
 import Formulario from './components/formulario'
@@ -9,18 +8,23 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
 
 
-
 function App() {
+  const [cita, setCita] = useState([]);
+
+  const addCita = (contactInfo) => {
+    setCita([...cita, contactInfo]);
+  }
+  console.log(cita)
   return(
   <><div>
     <h1 class="hola">Administrador de pacientes</h1>
   </div><Container>
       <Row>
         <Col>
-          <Formulario />
+          <Formulario addCita={addCita}/>
         </Col>
         <Col>
-          <Cita />
+          <Cita cita={cita}/>
         </Col>
       </Row>
     </Container></>
