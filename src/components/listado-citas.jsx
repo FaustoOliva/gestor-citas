@@ -3,10 +3,11 @@ import Cita from './cita.jsx'
 
 export default function ListadoCitas({ listaCitas, setListaCitas }) {
     return (
-        listaCitas.map((cita, i) =>
+        listaCitas.map(( i) =>
             <Cita
                 listaCitas={listaCitas}
                 setListaCitas={setListaCitas}
+
                 key={i}
             />)
     )
