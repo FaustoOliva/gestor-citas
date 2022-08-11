@@ -1,11 +1,19 @@
 import '../App.css';
 
 
-function cita({ cita }) {
-    console.log(cita)
+function cita( {listaCitas, setListaCitas} ) {
+
+    const borrarCita = (i) => {
+        console.log('i:', i.value)
+        const citaABorrar = [...listaCitas];
+        citaABorrar.splice((i+1), 1)
+        setListaCitas(citaABorrar)
+    }
+
     return (
         <div class="one-half column">
-            <><h2>Administra tus citas</h2><div class="cita">
+            {listaCitas.map((cita, i) =>
+                <><div class="cita">
                     <p>Mascota:
                         <span> {cita.nombreM}</span>
                     </p>
@@ -21,8 +29,9 @@ function cita({ cita }) {
                     <p>Sintomas:
                         <span> {cita.sintomas}</span>
                     </p>
-                    <button class="button elimnar u-full-width">Eliminar ×</button>
+                    <button class="button elimnar u-full-width" onClick={() => {borrarCita(i)}}>Eliminar ×</button>
                 </div></>
+            )}
         </div>
     );
 }

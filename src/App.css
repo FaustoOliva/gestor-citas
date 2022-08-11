@@ -67,6 +67,7 @@ h2{
   border-bottom: 1px solid #e1e1e1;
   color: black;
   border-radius: 1rem;
+  margin: 2rem;
 }
 
 .cita p {
@@ -81,10 +82,10 @@ h2{
   box-sizing: border-box;
 }
 
-.hola {
+.letter {
   display: flex;
-    justify-content: center;
-    font-family: 'Staatliches', cursive;
+  justify-content: center;
+  font-family: 'Staatliches', cursive;
 }
 
 button{

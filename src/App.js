@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
 import './App.css';
-import Cita from './components/cita'
-import Formulario from './components/formulario'
-import Listado from './components/listado-citas'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row'
-
+import Formulario from './components/formulario'
+import Listado from './components/listado-citas'
+import {listaCitas} from './components/listado-citas'
 
 function App() {
-  const [cita, setCita] = useState([])
+  const [listaCitas, setListaCitas] = useState([])
 
-  const addCita = (citaInfo) => {
-    setCita([...cita, citaInfo]);
-  }
-  console.log(cita)
+
   return (
     <><div>
-      <h1 class="hola">Administrador de pacientes</h1>
+      <h1 class="letter">Administrador de pacientes</h1>
     </div><Container>
         <Row>
           <Col>
-            <Formulario addCita={addCita} />
+            <Formulario setListaCitas={setListaCitas} />
           </Col>
           <Col>
-            <Listado {...cita, setCita} />
+            <h2>Administra tus citas</h2>
+            <Listado listaCitas={listaCitas} setListaCitas={setListaCitas} />
           </Col>
         </Row>
       </Container></>
