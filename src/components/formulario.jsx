@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form'
 import React, { useState } from 'react';
 
 
-function Formulario({ setListaCitas  }) {
+function Formulario({ setListaCitas }) {
     const [nombreM, setNombreM] = useState('');
     const [nombreD, setNombreD] = useState('');
     const [fecha, setFecha] = useState('');
@@ -14,7 +14,7 @@ function Formulario({ setListaCitas  }) {
     const sendInformation = (event) => {
         event.preventDefault()
         console.log("datos enviados")
-        setListaCitas (prev => [...prev, {
+        setListaCitas(prev => [...prev, {
             nombreM,
             nombreD,
             fecha,
@@ -27,8 +27,6 @@ function Formulario({ setListaCitas  }) {
         setHora("");
         setSintomas("");
     }
-
-
 
     return (
         <div class="one-half column">
