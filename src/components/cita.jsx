@@ -1,7 +1,7 @@
 import '../App.css';
 
 
-function cita({ listaCitas, setListaCitas, ...props }) {
+function cita({ listaCitas, setListaCitas }) {
     console.log("listado", listaCitas)
 
     const borrarCita = (i) => {
@@ -12,27 +12,28 @@ function cita({ listaCitas, setListaCitas, ...props }) {
     }
 
     return (
-        <div class="one-half column">
-            <><div class="cita">
-                <p>Mascota:
-                    <span> {props.nombreM}</span>
-                </p>
-                <p>Dueño:
-                    <span> {props.nombreD}</span>
-                </p>
-                <p>Fecha:
-                    <span> {props.fecha}</span>
-                </p>
-                <p>Hora:
-                    <span> {props.hora}</span>
-                </p>
-                <p>Sintomas:
-                    <span> {props.sintomas}</span>
-                </p>
-                <button class="button elimnar u-full-width" onClick={borrarCita}>Eliminar ×</button>
-            </div></>
-
-        </div>
+        <div className='scroll'> {listaCitas.map((cita, i) =>
+            <div class="one-half column">
+                <><div class="cita">
+                    <p>Mascota:
+                        <span> {cita.nombreM}</span>
+                    </p>
+                    <p>Dueño:
+                        <span> {cita.nombreD}</span>
+                    </p>
+                    <p>Fecha:
+                        <span> {cita.fecha}</span>
+                    </p>
+                    <p>Hora:
+                        <span> {cita.hora}</span>
+                    </p>
+                    <p>Sintomas:
+                        <span> {cita.sintomas}</span>
+                    </p>
+                    <button class="button elimnar u-full-width" onClick={() => {borrarCita(i)}}>Eliminar ×</button>
+                </div></>
+            </div>
+        )}</div>
     );
 }
 
