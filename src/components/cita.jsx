@@ -1,7 +1,7 @@
 import '../App.css';
 
 
-function cita({ listaCitas, setListaCitas }) {
+function Cita({ listaCitas, setListaCitas }) {
     console.log("listado", listaCitas)
 
     const borrarCita = (i) => {
@@ -13,8 +13,8 @@ function cita({ listaCitas, setListaCitas }) {
 
     return (
         <div className='scroll'> {listaCitas.map((cita, i) =>
-            <div class="one-half column">
-                <><div class="cita">
+            <div className="one-half column" key={i}>
+                <><div className="cita">
                     <p>Mascota:
                         <span> {cita.nombreM}</span>
                     </p>
@@ -30,11 +30,11 @@ function cita({ listaCitas, setListaCitas }) {
                     <p>Sintomas:
                         <span> {cita.sintomas}</span>
                     </p>
-                    <button class="button elimnar u-full-width" onClick={() => {borrarCita(i)}}>Eliminar ×</button>
+                    <button className="button elimnar u-full-width" onClick={() => {borrarCita(i)}}>Eliminar ×</button>
                 </div></>
             </div>
         )}</div>
     );
 }
 
-export default cita;
+export default Cita;
