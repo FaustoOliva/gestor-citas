@@ -42,11 +42,17 @@ function Formulario({ setListaCitas, usuario }) {
             return;
         }
 
-        // Agregar cita
-        setListaCitas((prev) => [
-            ...prev,
-            { idUsuario: usuario, nombreM, nombreD, fecha, hora, sintomas },
-        ]);
+        const nuevaCita = {
+            idCita: crypto.randomUUID(),   // ID único de la cita
+            idUsuario: usuario,            // ID del paciente actual
+            nombreM,
+            nombreD,
+            fecha,
+            hora,
+            sintomas
+        };
+
+        setListaCitas(prev => [...prev, nuevaCita]);
         setSuccess(true);
         limpiarCampos();
 
