@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form'
 import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 
-function Formulario({ setListaCitas }) {
+function Formulario({ setListaCitas, usuario }) {
     const [nombreM, setNombreM] = useState('');
     const [nombreD, setNombreD] = useState('');
     const [fecha, setFecha] = useState('');
@@ -45,7 +45,7 @@ function Formulario({ setListaCitas }) {
         // Agregar cita
         setListaCitas((prev) => [
             ...prev,
-            { nombreM, nombreD, fecha, hora, sintomas },
+            { idUsuario: usuario, nombreM, nombreD, fecha, hora, sintomas },
         ]);
         setSuccess(true);
         limpiarCampos();
