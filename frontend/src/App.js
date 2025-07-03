@@ -3,7 +3,7 @@ import './App.css';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 
-import Login from './components/Login';
+import RegistroLogin from './components/RegistroLogin';
 import VistaPaciente from './components/VistaPaciente';
 import VistaAdmin from './components/VistaAdmin';
 
@@ -45,10 +45,13 @@ function App() {
 
       <Container>
         {!usuarioActual ? (
-          <Login onLogin={(id, nombre) => {
-            setUsuarioActual(id);
-            setNombreVisible(nombre);
-          }} />
+          <RegistroLogin
+            onLogin={(id, nombre) => {
+              setUsuarioActual(id);
+              setNombreVisible(nombre);
+            }}
+          />
+
         ) : (
           <>
             <div className="text-center my-3">
