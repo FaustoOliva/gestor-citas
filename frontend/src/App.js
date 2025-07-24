@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-
-import RegistroLogin from './components/RegistroLogin';
-import VistaPaciente from './components/VistaPaciente';
-import VistaAdmin from './components/VistaAdmin';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
   const [listaCitas, setListaCitas] = useState([]);
@@ -38,37 +38,13 @@ function App() {
   };
 
   return (
-    <>
-      <div>
-        <h1 className="letter">Administrador de pacientes</h1>
-      </div>
-
-      <Container>
-        {!usuarioActual ? (
-          <RegistroLogin
-            onLogin={(id, nombre) => {
-              setUsuarioActual(id);
-              setNombreVisible(nombre);
-            }}
-          />
-
-        ) : (
-          <>
-            <div className="text-center my-3">
-              <p><strong>Usuario:</strong> {nombreVisible}</p>
-              <Button variant="outline-danger" onClick={cerrarSesion}>
-                Cerrar sesión
-              </Button>
-            </div>
-
-            {usuarioActual === 'admin'
-              ? <VistaAdmin listaCitas={listaCitas} setListaCitas={setListaCitas} />
-              : <VistaPaciente listaCitas={listaCitas} setListaCitas={setListaCitas} idUsuario={usuarioActual} />
-            }
-          </>
-        )}
-      </Container>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </Router>
   );
 }
 

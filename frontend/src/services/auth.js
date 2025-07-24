@@ -1,16 +1,16 @@
-export async function registrarPaciente(paciente) {
+export async function autenticarUsuario(credentials) {
   try {
-    const response = await fetch('http://localhost:5000/pacients', {
+    const response = await fetch('http://localhost:5000/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(paciente)
+      body: JSON.stringify(credentials)
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Error al registrar');
+      throw new Error(error.error || 'Error al autenticar');
     }
 
     return await response.json();

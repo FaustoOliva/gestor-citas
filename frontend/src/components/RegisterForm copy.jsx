@@ -19,7 +19,7 @@ function RegistroLogin({ onLogin }) {
         localStorage.setItem('pacientes', JSON.stringify(lista));
     };
 
-    async  function handleSubmit (e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         setError('');
 
