@@ -18,7 +18,7 @@ router.get('', (req, res) => {
 
 // POST paciente nuevo
 router.post('', (req, res) => {
-    const nuevo = req.body;
+    var nuevo = req.body;
     const data = JSON.parse(fs.readFileSync(RUTA_JSON));
     if (!nuevo?.nombre || !nuevo?.email || !nuevo?.password) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
@@ -28,11 +28,11 @@ router.post('', (req, res) => {
     }
     
     // Hashear el ID basado en el email y un timestamp
-    nuevo?.id = createHashedId(nuevo?.email);
-    
+    nuevo.id = createHashedId(nuevo.email);
+
     data.push(nuevo);
     fs.writeFileSync(RUTA_JSON, JSON.stringify(data, null, 2));
-    res.status(201).json({ mensaje: 'Registrado correctamente', id: nuevo?.id });
+    res.status(201).json({ mensaje: 'Registrado correctamente', id: nuevo.id });
 });
 
 

@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/pacients", PacientRouter);
-app.use("/login", AuthRouter);
+app.use("/auth", AuthRouter);
 
 
 app.listen(port, () => {
