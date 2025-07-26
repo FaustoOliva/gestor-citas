@@ -1,6 +1,5 @@
 import sql from 'mssql';
-import dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
 
 const config = {
     user: process.env.DB_USER,
@@ -19,8 +18,9 @@ const poolPromise = new sql.ConnectionPool(config)
         console.log('Conectado a SQL Server');
         return pool;
     })
-    .catch(err => console.error('Error en conexión SQL:', err));
+    .catch(err => console.error('Error en conexión SQL:', config, err));
 
-module.exports = {
-    sql, poolPromise
+export default {
+    sql,
+    poolPromise
 };

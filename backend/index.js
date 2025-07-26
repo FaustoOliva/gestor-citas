@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import PacientRouter from './src/controllers/PacientsController.js';
+import PacientRouter from './src/controllers/PacientController.js';
 import AuthRouter from './src/controllers/AuthController.js';
 import dotenv from 'dotenv';
 dotenv.config();

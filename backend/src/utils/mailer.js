@@ -8,16 +8,30 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS
-    }
+    },
+    tls: {
+        rejectUnauthorized: false,
+    },
+    logger: true // Habilitar registro
 });
 
-async function enviarCodigo(email, codigo) {
-    await transporter.sendMail({
-        from: `"Veterinaria" <${process.env.MAIL_USER}>`,
-        to: email,
-        subject: 'Código de verificación',
-        text: `Tu código de verificación es: ${codigo}`
-    });
+async function sendCodeVerification(email, codigo) {
+    try {
+        const info = await transporter.sendMail({
+            from: `"Vet Citas" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: 'Código de verificación',
+            text: `Tu código de verificación es: ${codigo}`
+        });
+        return info;
+    } catch (error) {
+        console.error('Error al enviar el correo de verificación:', error);
+        throw new Error('ERROR: No se pudo enviar el correo de verificación.');
+
+    }
+
 }
 
-module.exports = { enviarCodigo };
+export default {
+    sendCodeVerification
+};
