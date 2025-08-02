@@ -10,7 +10,7 @@ const LoginPage = () => {
       <h1 className="text-center mb-4">Iniciar sesión</h1>
       <p className="text-center mb-4">
         Inicia sesión para acceder a tu cuenta, agendar citas y controlar el historial de tus mascotas.
-      </p>
+      </p> 
       <LoginForm />
       <div className="text-center mt-3">
         <p>

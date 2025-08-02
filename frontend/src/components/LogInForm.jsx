@@ -1,13 +1,36 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Card } from 'react-bootstrap';
+import { Form, Button, Container, Card, Alert, Spinner } from 'react-bootstrap';
+import { logInUser } from '../services/auth.js';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleRegisterRedirect = () => {
+    navigate('/pacient');
+  }
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    alert(`Iniciando sesión con:\nEmail: ${email}\nContraseña: ${password}`);
+    setError('');
+    setIsLoading(true);
+
+    const credentials = { email, password };
+    try {
+      await logInUser(credentials); // Llama al servicio de autenticación
+      // Simular un retraso para ver el spinner
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate('/pacient'); // Redirigir en caso de éxito
+      }, 1000);
+    } catch (err) {
+      setIsLoading(false);
+      setError(err.message || 'Error en el inicio de sesión. Por favor, revisa tus credenciales.');
+    }
   };
 
   return (
@@ -15,6 +38,7 @@ const LoginForm = () => {
       <Card style={{ width: '100%', maxWidth: 400 }} className="p-4 shadow-sm">
         <Card.Body>
           <Card.Title className="mb-3">Inicia sesión</Card.Title>
+          {error && <Alert variant="danger">{error}</Alert>} {/* Mostrar error */}
           <Form onSubmit={handleLogin}>
             <Form.Group className="mb-3" controlId="loginEmail">
               <Form.Label>Correo electrónico</Form.Label>
@@ -38,8 +62,8 @@ const LoginForm = () => {
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="w-100">
-              Iniciar
+            <Button variant="primary" type="submit" className="w-100" disabled={isLoading}>
+              {isLoading ? <Spinner animation="border" size="sm" /> : 'Iniciar'}
             </Button>
           </Form>
         </Card.Body>
