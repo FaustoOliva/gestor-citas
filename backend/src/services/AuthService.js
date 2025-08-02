@@ -78,27 +78,27 @@ export class AuthService {
         const codigoGenerado = Math.floor(100000 + Math.random() * 900000); // Genera un código aleatorio de 6 dígitos  
 
         try {
-            const info = await sendCodeVerification(email, codigoGenerado);
-            if (info instanceof Error) {
-                console.error('Error al enviar el correo de verificación:', info);
-                return new Error('ERROR: No se pudo enviar el correo de verificación.');
-            }
-            console.log('Correo enviado:', info);
-
             const user = await pacientService.getPacientByEmail(email);
             if (user instanceof Error) {
                 console.error('Error al obtener el usuario:', user);
                 return new Error('ERROR: No se pudo obtener el usuario.');
             }
             console.log('Usuario obtenido:', user);
-
+            
             const response = await pacientService.putFieldPacientById(user.Id, 'CodigoVerificacion', codigoGenerado);
             if (response instanceof Error) {
                 console.error('Error al guardar el código de verificación:', response);
                 return new Error('ERROR: No se pudo guardar el código de verificación.');
             }
             console.log('Código de verificación guardado en la base de datos.');
-
+            
+            const info = await sendCodeVerification(email, codigoGenerado);
+            if (info instanceof Error) {
+                console.error('Error al enviar el correo de verificación:', info);
+                return new Error('ERROR: No se pudo enviar el correo de verificación.');
+            }
+            console.log('Correo enviado:', info);
+            
             return 'Correo de confirmación enviado.';
         } catch (error) {
             console.error('Error en sendMailConfirmation:', error);

@@ -10,8 +10,6 @@ export default class User {
             PasswordHash: { type: 'nvarchar(MAX)', required: true },
             Rol: { type: 'nvarchar(20)', required: true, default: 'cliente' },
             CodigoVerificacion: { type: 'nvarchar(6)', required: false, default: null },
-            CodigoExpiracion: { type: 'datetime', required: false, default: null },
-            FechaVerificacion: { type: 'datetime', required: false, default: null },
             EmailVerificado: { type: 'bit', required: false, default: false }
         };
     }
