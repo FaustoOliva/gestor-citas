@@ -28,7 +28,7 @@ export class AuthService {
                 .input('Apellido', sql.NVarChar, User?.apellido ?? null)
                 .input('Nombre', sql.NVarChar, User?.nombre ?? null)
                 .input('Email', sql.NVarChar, User?.email ?? null)
-                .input('Telefono', sql.NVarChar, User?.telefono ?? null)
+                .input('Telefono', sql.NVarChar, User?.phone ?? null)
                 .input('FechaRegistro', sql.DateTime, new Date().toISOString())
                 .input('PasswordHash', sql.NVarChar, User?.password ?? null)
                 .input('Rol', sql.NVarChar, User?.rol ?? 'cliente')

@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import LoginForm from '../components/LogInForm';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    const currentUser = localStorage.getItem('currentUser');
+    console.log('currentUser', currentUser);
+  }, [navigate]);
 
   return (
     <div className="py-5">

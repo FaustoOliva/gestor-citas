@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
-import { registerUser } from '../services/auth.js';
+import { Form, Button, Container, Row, Col, Card, Alert, Spinner } from 'react-bootstrap';
+import { registerUser, sendMailConfirmation } from '../services/auth.js';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = () => {
@@ -37,10 +37,27 @@ const RegisterForm = () => {
 
     const user = { nombre, apellido, email, password, phone };
     try {
-      await registerUser(user);
-      setIsLoading(false);
-      handleLoginRedirect();
-      navigate('/verification', { state: { email } });
+      var data = await registerUser(user);
+      if (data.error) {
+          setError(data.error);
+          return;
+        }
+      data = await sendMailConfirmation(email);
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
+      setTimeout(() => {
+        setIsLoading(false);
+        
+        const { password: _, ...userWithoutPassword } = user;
+        localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
+        navigate('/verification');
+      }, 2000);
 
     } catch (err) {
       setIsLoading(false);

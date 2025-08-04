@@ -21,9 +21,17 @@ const LoginForm = () => {
 
     const credentials = { email, password };
     try {
-      await logInUser(credentials); // Llama al servicio de autenticación
+      const data = await logInUser(credentials); // Llama al servicio de autenticación
       // Simular un retraso para ver el spinner
       setTimeout(() => {
+        if (data.error) {
+          setError(data.error);
+          setIsLoading(false);
+          return;
+        }
+        if (data.user) {
+          localStorage.setItem('currentUser', JSON.stringify(data.user));
+        }
         setIsLoading(false);
         navigate('/pacient'); // Redirigir en caso de éxito
       }, 1000);
