@@ -30,13 +30,13 @@ export async function registerUser(user) {
 }
 
 export async function sendMailConfirmation(email) {
-  return apiCall(`/send-mail-confirmation/${email}`, {
+  return apiCall(`/auth/send-mail-confirmation/${email}`, {
     method: 'GET'
   });
 }
 
 export async function verifyEmail(email, code) {
-  return apiCall(`/verify-email/${email}/${code}`, {
+  return apiCall(`/auth/verify-email/${email}/${code}`, {
     method: 'GET'
   });
 }
