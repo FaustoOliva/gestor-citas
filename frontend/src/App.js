@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerificationPage from './pages/VerificationPage';
+import PacientPage from './pages/PacientPage';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -18,11 +19,6 @@ function App() {
     }
   }, []);
 
-  const cerrarSesion = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-  };
-
   return (
     <Router>
       <Routes>
@@ -30,12 +26,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verification" element={<VerificationPage />} />
-        <Route path="/pacient" element={
-          <Container className="text-center mt-5">
-            <h1>Bienvenido, {currentUser ? currentUser.nombre : ''}</h1>
-            <Button variant="danger" onClick={cerrarSesion}>Cerrar sesión</Button>
-          </Container>
-        } />
+        <Route path="/pacient" element={<PacientPage />} />
       </Routes>
     </Router>
   );

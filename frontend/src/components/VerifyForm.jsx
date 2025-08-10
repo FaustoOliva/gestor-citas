@@ -41,25 +41,30 @@ const VerifyForm = () => {
         }
     };
 
-    // const handleKeyDown = (e, index) => {
-    //     if (e.key === 'ArrowRight' && index < 5) {
-    //         const next = document.getElementById(`digit-${index + 1}`);
-    //         if (next) {
-    //             next.focus();
-    //             handleFocus(e);
-    //         }
-    //     } else if (e.key === 'ArrowLeft' && index > 0) {
-    //         const prev = document.getElementById(`digit-${index - 1}`);
-    //         if (prev) {
-    //             prev.focus();
-    //             handleFocus(e);
-    //         }
-    //     }
-    // };
-
     const handleFocus = (e) => {
         e.target.select();
     };
+
+    const handlePaste = (e, index) => {
+        e.preventDefault();
+        const paste = e.clipboardData.getData('text').slice(0, 6 - index);
+        const newCode = [...code];
+
+        let lastIndex = index;
+        for (let i = 0; i < paste.length; i++) {
+            if (/\d/.test(paste[i])) { // Solo procesa dígitos
+                newCode[index + i] = paste[i];
+                lastIndex = index + i;
+            }
+        }
+        setCode(newCode);
+
+        const lastInput = document.getElementById(`digit-${lastIndex}`);
+        if (lastInput) {
+            lastInput.focus();
+        }
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -91,8 +96,9 @@ const VerifyForm = () => {
             document.getElementById('digit-0').focus();
             setIsLoading(false);
         }
-
     };
+
+
 
     return (
         <div className="d-flex justify-content-center">
@@ -120,10 +126,10 @@ const VerifyForm = () => {
                                         maxLength={1}
                                         value={digit}
                                         onChange={(e) => handleChange(e.target.value, index)}
-                                        //onKeyDown={(e) => handleKeyDown(e, index)}
+                                        onPaste={(e) => handlePaste(e, index)}
                                         onFocus={handleFocus}
                                         className="text-center fs-4"
-                                        style={{ caretColor: 'transparent' }} 
+                                        style={{ caretColor: 'transparent' }}
                                     />
                                 </Col>
                             ))}
