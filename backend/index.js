@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import PacientRouter from './src/controllers/PacientController.js';
+import AppointmentController from './src/controllers/AppointmentController.js';
 import AuthRouter from './src/controllers/AuthController.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/pacients", PacientRouter);
+app.use("/appointments", AppointmentController);
 app.use("/auth", AuthRouter);
 
 
