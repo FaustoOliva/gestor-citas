@@ -27,7 +27,6 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-// GET pacient by ID or Email
 router.get('', async (req, res) => {
     console.log('This is a function on the controller');
     try {
@@ -53,6 +52,20 @@ router.get('', async (req, res) => {
 
     }
 
+});
+
+router.get("/allUsers", async (req, res) => {
+    console.log('This is a function on the controller');
+    try {
+        const data = await pacientService.getAllPacients();
+        if (data instanceof Error) {
+            return res.status(400).json({ error: 'ERROR: No se pudo obtener la lista de pacientes.' });
+        }
+        return res.status(200).json(data);
+    } catch (error) {
+        console.error('Error al obtener la lista de pacientes:', error);
+        return res.status(500).json({ error: 'ERROR: No se pudo obtener la lista de pacientes.' });
+    }
 });
 
 // POST paciente nuevo

@@ -65,4 +65,16 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+router.get("/all", async (req, res) => {
+  try {
+    const appointments = await appointmentService.getAllAppointments();
+    if (appointments instanceof Error) {
+      return res.status(400).json({ error: appointments.message });
+    }
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
