@@ -31,8 +31,8 @@ export class AuthService {
                 .input('Telefono', sql.NVarChar, User?.phone ?? null)
                 .input('FechaRegistro', sql.DateTime, new Date().toISOString())
                 .input('PasswordHash', sql.NVarChar, User?.password ?? null)
-                .input('Rol', sql.NVarChar, User?.rol ?? 'cliente')
-                .query(`INSERT INTO ${UserTable}(Apellido, Nombre, Email, Telefono, FechaRegistro, PasswordHash, Rol) VALUES (@Apellido, @Nombre, @Email, @Telefono, @FechaRegistro, @PasswordHash, @Rol)`);
+                .input('EsAdmin', sql.Bit, User?.esadmin ?? 0)
+                .query(`INSERT INTO ${UserTable}(Apellido, Nombre, Email, Telefono, FechaRegistro, PasswordHash, EsAdmin) VALUES (@Apellido, @Nombre, @Email, @Telefono, @FechaRegistro, @PasswordHash, @EsAdmin)`);
             console.log(response)
             if (response.rowsAffected[0] === 0) {
                 return new Error('ERROR: No se pudo crear el usuario.');
