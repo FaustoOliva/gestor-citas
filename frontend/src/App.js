@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerificationPage from './pages/VerificationPage';
 import PacientPage from './pages/PacientPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -27,6 +26,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verification" element={<VerificationPage />} />
         <Route path="/pacient" element={<PacientPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </Router>
   );

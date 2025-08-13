@@ -27,3 +27,9 @@ export async function getAppointmentsByUser(userId) {
     method: 'GET'
   });
 }
+
+export async function getAllAppointments() {
+  return apiCall('/appointments/all', {
+    method: 'GET'
+  });
+}

@@ -33,7 +33,11 @@ const LoginForm = () => {
           localStorage.setItem('currentUser', JSON.stringify(data.user));
         }
         setIsLoading(false);
-        navigate('/pacient'); // Redirigir en caso de éxito
+        if (data.user?.EsAdmin){
+          navigate('/admin');
+        } else {
+          navigate('/pacient');
+        }
       }, 1000);
     } catch (err) {
       setIsLoading(false);
