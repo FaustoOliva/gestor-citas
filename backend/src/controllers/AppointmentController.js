@@ -29,30 +29,6 @@ router.post("", async (req, res) => {
   }
 });
 
-router.get("/species", async (req, res) => {
-  try {
-    const species = await appointmentService.getSpecies();
-    if (species instanceof Error) {
-      return res.status(500).json({ error: species.message });
-    }
-    res.status(200).json(species);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get("/services/:specie", async (req, res) => {
-  try {
-    const services = await appointmentService.getServicesBySpecie(req.params.specie);
-    if (services instanceof Error) {
-      return res.status(500).json({ error: services.message });
-    }
-    res.status(200).json(services);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 router.get("/user/:userId", async (req, res) => {
   try {
     const appointments = await appointmentService.getAppointmentsByUserId(req.params.userId);
@@ -65,7 +41,7 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
-router.get("/all", async (req, res) => {
+router.get("", async (req, res) => {
   try {
     const appointments = await appointmentService.getAllAppointments();
     if (appointments instanceof Error) {
@@ -75,6 +51,15 @@ router.get("/all", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+router.put("/:id", async (req, res) => {
+});
+
+router.delete("/:id", async (req, res) => {
+});
+
+router.get("/pet/:petId", async (req, res) => {
 });
 
 export default router;

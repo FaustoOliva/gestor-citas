@@ -61,8 +61,8 @@ router.get('/send-mail-confirmation/:email', async (req, res) => {
 });
 
 // GET verify email
-router.get('/verify-email/:email/:codigo', async (req, res) => {
-  const { email, codigo } = req.params;
+router.post('/verify-email', async (req, res) => {
+  const { email, codigo } = req.body;
   if (!email || !codigo) {
     return res.status(400).json({ error: 'ERROR: Se debe proporcionar un email y un código.' });
   }

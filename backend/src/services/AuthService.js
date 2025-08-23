@@ -2,64 +2,34 @@ import db from '../../db.js'
 import mail from '../utils/mailer.js';
 import 'dotenv/config'
 import hash from '../utils/hashing.js';
-import { PacientService } from './PacientService.js';
+import { UserService } from './UserService.js';
 
 const { sql, poolPromise } = db;
 const { sendCodeVerification } = mail;
 const { hashingPassword, comparePassword } = hash;
-const pacientService = new PacientService();
-const UserTable = process.env.DB_USERS_TABLE;
+const userService = new UserService();
 
 export class AuthService {
 
     registerUser = async (User) => {
         console.log('This is a function on the service');
-        console.log(User)
-        const text_exito = "Se ha creado con exito.";
 
         User.password = await hashingPassword(User.password);
         if (User.password instanceof Error) {
             return new Error('ERROR: No se pudo hashear la contraseña.');
         }
 
-        try {
-            const pool = await poolPromise;
-            const response = await pool.request()
-                .input('Apellido', sql.NVarChar, User?.apellido ?? null)
-                .input('Nombre', sql.NVarChar, User?.nombre ?? null)
-                .input('Email', sql.NVarChar, User?.email ?? null)
-                .input('Telefono', sql.NVarChar, User?.phone ?? null)
-                .input('FechaRegistro', sql.DateTime, new Date().toISOString())
-                .input('PasswordHash', sql.NVarChar, User?.password ?? null)
-                .input('EsAdmin', sql.Bit, User?.esadmin ?? 0)
-                .query(`INSERT INTO ${UserTable}(Apellido, Nombre, Email, Telefono, FechaRegistro, PasswordHash, EsAdmin) VALUES (@Apellido, @Nombre, @Email, @Telefono, @FechaRegistro, @PasswordHash, @EsAdmin)`);
-            console.log(response)
-            if (response.rowsAffected[0] === 0) {
-                return new Error('ERROR: No se pudo crear el usuario.');
-            }
-
-            return text_exito;
-        } catch (error) {
-            console.error('Error al registrar usuario:', error);
-            return new Error('ERROR: No se pudo crear el usuario.');
-        }
-
+        return await userService.createUser(User);
     }
 
     loginUser = async (email, password) => {
         console.log('This is a function on the service');
 
         try {
-            const pool = await poolPromise;
-            const response = await pool.request()
-                .input('Email', sql.NVarChar, email)
-                .query(`SELECT * FROM ${UserTable} WHERE Email = @Email`);
-
-            if (response.recordset.length === 0) {
-                return new Error('Usuario no encontrado');
+            const user = await userService.getUserByEmail(email);
+            if (user instanceof Error) {
+                return new Error('ERROR: No se pudo obtener el usuario.');
             }
-
-            const user = response.recordset[0];
 
             const passwordMatch = await comparePassword(password, user.PasswordHash);
             if (passwordMatch instanceof Error || !passwordMatch) {
@@ -78,27 +48,27 @@ export class AuthService {
         const codigoGenerado = Math.floor(100000 + Math.random() * 900000); // Genera un código aleatorio de 6 dígitos  
 
         try {
-            const user = await pacientService.getPacientByEmail(email);
+            const user = await userService.getUserByEmail(email);
             if (user instanceof Error) {
                 console.error('Error al obtener el usuario:', user);
                 return new Error('ERROR: No se pudo obtener el usuario.');
             }
             console.log('Usuario obtenido:', user);
-            
-            const response = await pacientService.putFieldPacientById(user.Id, 'CodigoVerificacion', codigoGenerado);
+
+            const response = await userService.putFieldUserById(user.Id, 'CodigoVerificacion', codigoGenerado);
             if (response instanceof Error) {
                 console.error('Error al guardar el código de verificación:', response);
                 return new Error('ERROR: No se pudo guardar el código de verificación.');
             }
             console.log('Código de verificación guardado en la base de datos.');
-            
+
             const info = await sendCodeVerification(email, codigoGenerado);
             if (info instanceof Error) {
                 console.error('Error al enviar el correo de verificación:', info);
                 return new Error('ERROR: No se pudo enviar el correo de verificación.');
             }
             console.log('Correo enviado:', info);
-            
+
             return 'Correo de confirmación enviado.';
         } catch (error) {
             console.error('Error en sendMailConfirmation:', error);
@@ -110,7 +80,7 @@ export class AuthService {
         console.log('This is a function on the service');
 
         try {
-            const user = await pacientService.getPacientByEmail(email);
+            const user = await userService.getUserByEmail(email);
             if (user instanceof Error) {
                 console.error('Error al obtener el usuario:', user);
                 return new Error('ERROR: No se pudo obtener el usuario.');
@@ -120,7 +90,7 @@ export class AuthService {
                 return new Error('ERROR: Código de verificación incorrecto.');
             }
 
-            const response = await pacientService.putFieldPacientById(user.Id, 'EmailVerificado', true);
+            const response = await userService.putFieldUserById(user.Id, 'EmailVerificado', true);
             if (response instanceof Error) {
                 console.error('Error al verificar el email:', response);
                 return new Error('ERROR: No se pudo verificar el email.');
