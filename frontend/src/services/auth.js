@@ -27,7 +27,11 @@ export async function sendMailConfirmation(email) {
 }
 
 export async function verifyEmail(email, code) {
-  return apiCall(`/auth/verify-email/${email}/${code}`, {
-    method: 'GET'
+  return apiCall(`/auth/verify-email`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, code })
   });
 }

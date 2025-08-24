@@ -1,17 +1,5 @@
 import { apiCall } from "./apiCall";
 
-export async function getSpecies() {
-  return apiCall('/appointments/species', {
-    method: 'GET'
-  });
-}
-
-export async function getServicesBySpecie(specieId) {
-  return apiCall(`/appointments/services/${specieId}`, {
-    method: 'GET'
-  });
-}
-
 export async function createAppointment(appointmentData) {
   return apiCall('/appointments', {
     method: 'POST',
@@ -22,14 +10,36 @@ export async function createAppointment(appointmentData) {
   });
 }
 
-export async function getAppointmentsByUser(userId) {
-  return apiCall(`/appointments/user/${userId}`, {
+export async function getAppointmentById(appointmentId) {
+  return apiCall(`/appointments/${appointmentId}`, {
     method: 'GET'
   });
 }
 
-export async function getAllAppointments() {
-  return apiCall('/appointments/all', {
+export async function getAppointmentsByPetId(petId) {
+  return apiCall(`/appointments/pets/${petId}`, {
     method: 'GET'
+  });
+}
+
+export async function getAppointments() {
+  return apiCall('/appointments', {
+    method: 'GET'
+  });
+}
+
+export async function updateAppointment(appointmentId, appointmentData) {
+  return apiCall(`/appointments/${appointmentId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(appointmentData)
+  });
+}
+
+export async function deleteAppointment(appointmentId) {
+  return apiCall(`/appointments/${appointmentId}`, {
+    method: 'DELETE'
   });
 }

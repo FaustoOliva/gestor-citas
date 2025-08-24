@@ -1,7 +1,7 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Spinner, Alert, Card, Form, Row, Col, Table, Button, Badge, Modal } from 'react-bootstrap';
 //import { getAppointments, updateAppointmentStatus, deleteAppointment } from '../services/appointmentsAdminService';
-import { getAllAppointments } from '../services/appointment';
+import { getAppointments } from '../services/appointment';
 
 export const filterAppointments = (appointments, filters) => {
 
@@ -39,7 +39,7 @@ const AdminPage = () => {
     const fetchAppointments = async () => {
         setLoading(true);
         try {
-            var data = await getAllAppointments();
+            var data = await getAppointments();
             data = filterAppointments(data, filters);
             setAppointments(data);
         } catch (err) {

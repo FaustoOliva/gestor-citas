@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Spinner, Alert, ListGroup, Badge, Button } from 'react-bootstrap';
-import { getAppointmentsByUser } from '../services/appointment';
+import { getAppointmentsByPetId } from '../services/appointment';
 
 const AppointmentsList = ({ userId, refreshTrigger }) => {
     const [appointments, setAppointments] = useState([]);
@@ -10,7 +10,7 @@ const AppointmentsList = ({ userId, refreshTrigger }) => {
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
-                const data = await getAppointmentsByUser(userId);
+                const data = await getAppointmentsByPetId(userId);
                 setAppointments(data);
             } catch (err) {
                 console.error('Error fetching appointments:', err);

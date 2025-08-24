@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Row, Col, Spinner, Card, Alert } from 'react-bootstrap';
-import { getSpecies, getServicesBySpecie, createAppointment } from '../services/appointment.js';
+import { createAppointment } from '../services/appointment.js';
+import { getSpecies, getServicesBySpecie } from '../services/front.js';
 
 const groupFields = (fieldsArray) => {
     const grouped = {};
@@ -23,7 +24,7 @@ const groupFields = (fieldsArray) => {
     return Object.values(grouped);
 };
 
-const CreateAppointmentForm = ({onAppointmentCreated}) => {
+const CreateAppointmentForm = ({ onAppointmentCreated }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [species, setSpecies] = useState([]);
     const [selectedSpecies, setSelectedSpecies] = useState('');
@@ -254,53 +255,53 @@ const CreateAppointmentForm = ({onAppointmentCreated}) => {
                                     {error && <Alert variant="danger">{error}</Alert>}
                                     {success && <Alert variant="success">{success}</Alert>}
 
-                                        <Form.Group className="mb-3" controlId="speciesSelect">
-                                            <Form.Label>Especie</Form.Label>
-                                            <Form.Select value={selectedSpecies} onChange={handleSpeciesChange} required>
-                                                <option value="">Seleccione una especie</option>
-                                                {species.map(sp => (
-                                                    <option key={sp.IdEspecie} value={sp.IdEspecie}>{sp.Nombre}</option>
+                                    <Form.Group className="mb-3" controlId="speciesSelect">
+                                        <Form.Label>Especie</Form.Label>
+                                        <Form.Select value={selectedSpecies} onChange={handleSpeciesChange} required>
+                                            <option value="">Seleccione una especie</option>
+                                            {species.map(sp => (
+                                                <option key={sp.Specie_Id} value={sp.Specie_Id}>{sp.Specie_Name}</option>
+                                            ))}
+                                        </Form.Select>
+                                    </Form.Group>
+
+                                    {selectedSpecies && (
+                                        <Form.Group className="mb-3" controlId="serviceSelect">
+                                            <Form.Label>Servicio</Form.Label>
+                                            <Form.Select value={selectedService} onChange={handleServiceChange} required>
+                                                <option value="">Seleccione un servicio</option>
+                                                {services.map(s => (
+                                                    <option key={s.IdServicio} value={s.IdServicio}>{s.Nombre}</option>
                                                 ))}
                                             </Form.Select>
                                         </Form.Group>
+                                    )}
 
-                                        {selectedSpecies && (
-                                            <Form.Group className="mb-3" controlId="serviceSelect">
-                                                <Form.Label>Servicio</Form.Label>
-                                                <Form.Select value={selectedService} onChange={handleServiceChange} required>
-                                                    <option value="">Seleccione un servicio</option>
-                                                    {services.map(s => (
-                                                        <option key={s.IdServicio} value={s.IdServicio}>{s.Nombre}</option>
-                                                    ))}
-                                                </Form.Select>
-                                            </Form.Group>
-                                        )}
-
-                                        {currentServiceDetails && (
-                                            <Card className="mb-4">
-                                                <Card.Body>
-                                                    <Card.Title>{currentServiceDetails.Nombre}</Card.Title>
-                                                    <Card.Text>
-                                                        <p className="mb-1">{currentServiceDetails.Descripcion}</p>
-                                                        <p className="mb-1">Duración: {currentServiceDetails.DuracionMinutos} minutos</p>
-                                                        <p className="mb-0">Precio: ${currentServiceDetails.Precio}</p>
-                                                    </Card.Text>
-                                                </Card.Body>
-                                            </Card>
-                                        )}
+                                    {currentServiceDetails && (
+                                        <Card className="mb-4">
+                                            <Card.Body>
+                                                <Card.Title>{currentServiceDetails.Nombre}</Card.Title>
+                                                <Card.Text>
+                                                    <p className="mb-1">{currentServiceDetails.Descripcion}</p>
+                                                    <p className="mb-1">Duración: {currentServiceDetails.DuracionMinutos} minutos</p>
+                                                    <p className="mb-0">Precio: ${currentServiceDetails.Precio}</p>
+                                                </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    )}
 
 
-                                        {renderDynamicForm()}
+                                    {renderDynamicForm()}
 
-                                        {selectedService && (
-                                            <div className="d-grid gap-2 mt-4">
-                                                <Button variant="primary" type="submit" size="lg">
-                                                    Confirmar Cita
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </Form>
-                                )}
+                                    {selectedService && (
+                                        <div className="d-grid gap-2 mt-4">
+                                            <Button variant="primary" type="submit" size="lg">
+                                                Confirmar Cita
+                                            </Button>
+                                        </div>
+                                    )}
+                                </Form>
+                            )}
                         </Card.Body>
                     </Card>
                 </Col>
