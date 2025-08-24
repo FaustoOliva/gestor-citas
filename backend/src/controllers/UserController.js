@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get("/", async (req, res) => {
+router.get("", async (req, res) => {
     console.log('This is a function on the controller');
     try {
         const data = await userService.getUsers();

@@ -59,7 +59,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 });
 
-router.get("/pet/:petId", async (req, res) => {
+router.get("/pets/:petId", async (req, res) => {
 });
 
 export default router;

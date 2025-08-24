@@ -14,7 +14,7 @@ export class PetService {
             const result = await pool.request()
                 .input("IdUsuario", sql.Int, userId)
                 .query(`
-                    SELECT Pet_Id, Pet_Name, Pet_Race, Specie_Name
+                    SELECT Pet_Id, Pet_Name, Pet_Breed, Specie_Name, Pet_Weight, Pet_BirthDate
                     FROM ${PetTable}
                     join ${SpecieTable} on Specie_Id = Pet_SpecieId
                     join ${UserTable} on User_Id = Pet_UserId and User_Id = @IdUsuario
@@ -36,7 +36,7 @@ export class PetService {
             const result = await pool.request()
                 .input("PetId", sql.Int, petId)
                 .query(`
-                    SELECT Pet_Id, Pet_Name, Pet_Race, Pet_BirthDate, Pet_Size, Pet_Weight, Specie_Name
+                    SELECT Pet_Id, Pet_Name, Pet_Breed, Pet_BirthDate, Pet_Size, Pet_Weight, Specie_Name
                     FROM ${PetTable} 
                     join ${SpecieTable} on Specie_Id = Pet_SpecieId
                     WHERE Pet_Id = @PetId and Pet_IsDeleted = 0
@@ -56,7 +56,7 @@ export class PetService {
             const pool = await poolPromise;
             const result = await pool.request()
                 .query(`
-                    select Pet_Id, Pet_Name, Pet_Race, Specie_Name, User_Name + ' ' + User_Lastname Owner_Name 
+                    select Pet_Id, Pet_Name, Pet_Breed, Specie_Name, User_Name + ' ' + User_Lastname Owner_Name 
                     from ${PetTable}
                     join ${SpecieTable} on Specie_Id = Pet_SpecieId
                     join ${UserTable} on User_Id = Pet_UserId
@@ -84,7 +84,7 @@ export class PetService {
                 .input("Peso", sql.Float, pet.peso)
                 .input("IdUsuario", sql.Int, pet.idUsuario)
                 .query(`
-                    INSERT INTO ${PetTable} (Pet_Name, Pet_SpecieId, Pet_Race, Pet_BirthDate, Pet_Size, Pet_UserId, Pet_Weight, Pet_IsDeleted)
+                    INSERT INTO ${PetTable} (Pet_Name, Pet_SpecieId, Pet_Breed, Pet_BirthDate, Pet_Size, Pet_UserId, Pet_Weight, Pet_IsDeleted)
                     VALUES (@Nombre, @Especie, @Raza, @FechaNac, @Tamaño, @IdUsuario, @Peso, 0)
                 `);
             if (result.rowsAffected[0] === 0) {
@@ -128,7 +128,7 @@ export class PetService {
                 .input("Peso", sql.Float, petData.peso)
                 .query(`
                     UPDATE ${PetTable}
-                    SET Pet_Race = @Raza, Pet_BirthDate = @FechaNac, Pet_Size = @Tamaño, Pet_Weight = @Peso
+                    SET Pet_Breed = @Raza, Pet_BirthDate = @FechaNac, Pet_Size = @Tamaño, Pet_Weight = @Peso
                     WHERE Pet_Id = @IdMascota
                 `);
             if (result.rowsAffected[0] === 0) {

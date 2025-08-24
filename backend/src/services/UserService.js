@@ -74,8 +74,9 @@ export class UserService {
                 .query(`
                     SELECT 
                         User_Id, 
-                        User_Nombre, 
-                        User_Apellido, 
+                        User_Name, 
+                        User_LastName, 
+                        User_Password,
                         User_Email, 
                         User_Phone,
                         User_RegisterDate,

@@ -27,11 +27,11 @@ export class AuthService {
 
         try {
             const user = await userService.getUserByEmail(email);
-            if (user instanceof Error) {
+            if (user instanceof Error || !user) {
                 return new Error('ERROR: No se pudo obtener el usuario.');
             }
-
-            const passwordMatch = await comparePassword(password, user.PasswordHash);
+            console.log('Usuario obtenido:', user);
+            const passwordMatch = await comparePassword(password, user.User_Password);
             if (passwordMatch instanceof Error || !passwordMatch) {
                 return new Error('Contraseña incorrecta');
             }

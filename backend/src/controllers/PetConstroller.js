@@ -64,7 +64,7 @@ router.get('', async (req, res) => {
     }
 })
 
-router.patch('/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     const petId = parseInt(req.params.id, 10);
     if (isNaN(petId) || !req.body) {
         return res.status(400).json({ error: "Invalid request" });
