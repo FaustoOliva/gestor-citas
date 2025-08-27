@@ -90,7 +90,7 @@ router.delete("/:id", async (req, res) => {
     if (result instanceof Error) {
       return res.status(404).json({ error: result.message });
     }
-    res.status(204).send({});
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
