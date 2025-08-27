@@ -55,7 +55,7 @@ const Pets = ({ userId, refreshTrigger }) => {
       setLoading(true);
       try {
         await deletePet(petId);
-        setPets((prevPets) => prevPets.filter((pet) => pet.Pet_Id !== petId));
+        setPets((prevPets) => prevPets.filter((pet) => pet.id !== petId));
       } catch (error) {
         console.error("Error deleting pet:", error);
         setError("Hubo un problema al eliminar la mascota.");
@@ -79,7 +79,7 @@ const Pets = ({ userId, refreshTrigger }) => {
   };
 
   const handleEditPet = async (petId) => {
-    const pet = pets.find((p) => p.Pet_Id === petId);
+    const pet = pets.find((p) => p.id === petId);
     setPetToEdit(pet);
     setShowEditModal(true);
   };
@@ -91,10 +91,10 @@ const Pets = ({ userId, refreshTrigger }) => {
     setLoading(true);
     setShowEditModal(false);
     try {
-      await updatePet(petToEdit.Pet_Id, petToEdit);
+      await updatePet(petToEdit.id, petToEdit);
       setPets((prevPets) =>
         prevPets.map((pet) =>
-          pet.Pet_Id === petToEdit.Pet_Id ? petToEdit : pet
+          pet.id === petToEdit.id ? petToEdit : pet
         )
       );
     } catch (err) {
@@ -145,38 +145,38 @@ const Pets = ({ userId, refreshTrigger }) => {
       <div className="row g-4 justify-content-center">
         {pets.map((pet) => (
           <div
-            key={pet.Pet_Id || Math.random()}
+            key={pet.id || Math.random()}
             className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch"
           >
             <Card className="shadow-sm w-100 h-100">
               <Card.Body>
                 <Card.Title className="mb-2">
-                  {pet.Pet_Name ? pet.Pet_Name : "Sin nombre"}{" "}
+                  {pet.name ? pet.name : "Sin nombre"}{" "}
                   <span className="text-secondary">
-                    ({pet.Specie_Name ? pet.Specie_Name : "Sin especie"})
+                    ({pet.specieName ? pet.specieName : "Sin especie"})
                   </span>
                 </Card.Title>
                 <Card.Text>
                   <p className="mb-1">
                     <span className="me-2">🐾</span>
                     <strong>
-                    {pet.Pet_Breed ? pet.Pet_Breed : "Desconocida"}
+                    {pet.breed ? pet.breed : "Desconocida"}
                     </strong>
                   </p>
                   <p className="mb-1">
                     <span className="me-2">🎂</span>
                     <strong>
-                    {pet.Pet_BirthDate ? formatDate(pet.Pet_BirthDate) : "Sin fecha"}
+                    {pet.birthDate ? formatDate(pet.birthDate) : "Sin fecha"}
                     </strong>
                   </p>
                   <p className="mb-0">
                     <span className="me-2">⚖️</span>
                     <strong>
-                    {pet.Pet_Weight ? pet.Pet_Weight : "Sin peso"} Kg
+                    {pet.weight ? pet.weight : "Sin peso"} Kg
                     </strong>
                     {" "}
                     <strong>
-                    ({pet.Pet_Size ? pet.Pet_Size : "Sin tamaño"})
+                    ({pet.size ? pet.size : "Sin tamaño"})
                     </strong>
                   </p>
                 </Card.Text>
@@ -184,21 +184,21 @@ const Pets = ({ userId, refreshTrigger }) => {
                   <Button
                     variant="outline-danger"
                     size="sm"
-                    onClick={() => handleDeletePet(pet.Pet_Id)}
+                    onClick={() => handleDeletePet(pet.id)}
                   >
                     Eliminar
                   </Button>
                   <Button
                     variant="outline-primary"
                     size="sm"
-                    onClick={() => handleViewHistory(pet.Pet_Id)}
+                    onClick={() => handleViewHistory(pet.id)}
                   >
                     Ver Historial
                   </Button>
                   <Button
                     variant="outline-secondary"
                     size="sm"
-                    onClick={() => handleEditPet(pet.Pet_Id)}
+                    onClick={() => handleEditPet(pet.id)}
                   >
                     Editar
                   </Button>

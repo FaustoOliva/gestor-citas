@@ -107,8 +107,8 @@ const CreatePetForm = ({ userId, onPetCreated }) => {
             >
               <option value="">Selecciona una especie</option>
               {speciesList.map((specie) => (
-                <option key={specie.Specie_Id} value={specie.Specie_Id}>
-                  {specie.Specie_Name}
+                <option key={specie.id} value={specie.id}>
+                  {specie.name}
                 </option>
               ))}
             </Form.Select>

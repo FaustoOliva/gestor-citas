@@ -308,8 +308,8 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
                     >
                       <option value="">Seleccione una especie</option>
                       {species.map((sp) => (
-                        <option key={sp.Specie_Id} value={sp.Specie_Id}>
-                          {sp.Specie_Name}
+                        <option key={sp.id} value={sp.id}>
+                          {sp.name}
                         </option>
                       ))}
                     </Form.Select>

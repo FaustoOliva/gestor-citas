@@ -21,10 +21,10 @@ const EditPetModal = ({
               <Form.Label>Nombre</Form.Label>
               <Form.Control
                 type="text"
-                value={petToEdit.Pet_Name ?? ""}
-                placeholder={petToEdit.Pet_Name}
+                value={petToEdit.name ?? ""}
+                placeholder={petToEdit.name}
                 onChange={(e) =>
-                  setPetToEdit({ ...petToEdit, Pet_Name: e.target.value })
+                  setPetToEdit({ ...petToEdit, name: e.target.value })
                 }
               />
             </Form.Group>
@@ -32,9 +32,9 @@ const EditPetModal = ({
               <Form.Label>Raza</Form.Label>
               <Form.Control
                 type="text"
-                value={petToEdit.Pet_Breed ?? ""}
+                value={petToEdit.breed ?? ""}
                 onChange={(e) =>
-                  setPetToEdit({ ...petToEdit, Pet_Breed: e.target.value })
+                  setPetToEdit({ ...petToEdit, breed: e.target.value })
                 }
               />
             </Form.Group>
@@ -42,11 +42,11 @@ const EditPetModal = ({
               <Form.Label>Fecha Nacimiento</Form.Label>
                 <Form.Control
                   type="date"
-                  value={petToEdit.Pet_Pet_BirthDate ?? ""}
+                  value={petToEdit.birthDate ?? ""}
                   onChange={(e) =>
                     setPetToEdit({
                       ...petToEdit,
-                      Pet_Pet_BirthDate: e.target.value,
+                      birthDate: e.target.value,
                     })
                   }
                 />
@@ -54,9 +54,9 @@ const EditPetModal = ({
             <Form.Group className="mb-3">
               <Form.Label>Tamaño</Form.Label>
               <Form.Select
-                value={petToEdit.Pet_Size ?? ""}
+                value={petToEdit.size ?? ""}
                 onChange={(e) =>
-                  setPetToEdit({ ...petToEdit, Pet_Size: e.target.value })
+                  setPetToEdit({ ...petToEdit, size: e.target.value })
                 }
               >
                 <option value="">Selecciona un tamaño</option>
@@ -69,9 +69,9 @@ const EditPetModal = ({
               <Form.Label>Peso</Form.Label>
               <Form.Control
                 type="number"
-                value={petToEdit.Pet_Weight ?? ""}
+                value={petToEdit.weight ?? ""}
                 onChange={(e) =>
-                  setPetToEdit({ ...petToEdit, Pet_Weight: e.target.value })
+                  setPetToEdit({ ...petToEdit, weight: e.target.value })
                 }
               />
             </Form.Group>

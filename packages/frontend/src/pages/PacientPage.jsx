@@ -28,7 +28,7 @@ const PacientPage = () => {
 
   return (
     <Container className="text-center mt-5">
-      <h1>Bienvenido, {currentUser ? currentUser.User_Name : ""}</h1>
+      <h1>Bienvenido, {currentUser ? currentUser.name : ""}</h1>
       <div className="d-flex justify-content-center mb-4">
         <ButtonGroup>
           <Button
@@ -53,7 +53,7 @@ const PacientPage = () => {
             onAppointmentCreated={handleAppointmentCreated}
           />
           <Appointments
-            userId={currentUser ? currentUser.User_Id : null}
+            userId={currentUser ? currentUser.id : null}
             refreshTrigger={refreshAppointments}
           />
         </>
@@ -62,11 +62,11 @@ const PacientPage = () => {
       {activeView === "pets" && (
         <>
           <CreatePetForm
-            userId={currentUser ? currentUser.User_Id : null}
+            userId={currentUser ? currentUser.id : null}
             onPetCreated={handlePetCreated}
           />
           <Pets
-            userId={currentUser ? currentUser.User_Id : null}
+            userId={currentUser ? currentUser.id : null}
             refreshTrigger={refreshPets}
           />
         </>
