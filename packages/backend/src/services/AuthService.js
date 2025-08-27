@@ -1,10 +1,8 @@
-import db from "../../db.js";
 import mail from "../utils/mailer.js";
 import "dotenv/config";
 import hash from "../utils/hashing.js";
 import { UserService } from "./UserService.js";
 
-const { sql, poolPromise } = db;
 const { sendCodeVerification } = mail;
 const { hashingPassword, comparePassword } = hash;
 const userService = new UserService();
@@ -12,10 +10,10 @@ const userService = new UserService();
 export class AuthService {
   registerUser = async (User) => {
     console.log("This is a function on the service");
-
+    
     User.password = await hashingPassword(User.password);
     if (User.password instanceof Error) {
-      return new Error("ERROR: No se pudo hashear la contraseña.");
+      throw new Error("ERROR: No se pudo hashear la contraseña.");
     }
 
     return await userService.createUser(User);
@@ -30,7 +28,7 @@ export class AuthService {
         return new Error("ERROR: No se pudo obtener el usuario.");
       }
       console.log("Usuario obtenido:", user);
-      const passwordMatch = await comparePassword(password, user.User_Password);
+      const passwordMatch = await comparePassword(password, user.password);
       if (passwordMatch instanceof Error || !passwordMatch) {
         return new Error("Contraseña incorrecta");
       }

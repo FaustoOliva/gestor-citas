@@ -39,12 +39,17 @@ export class AppointmentService {
       const pool = await poolPromise;
       const result = await pool.request().input("IdUsuario", sql.Int, userId)
         .query(`
-                    Select c.IdCita IdCita, s.Nombre NombreServicio, e.Nombre NombreEspecie, 
-                    s.Descripcion Descripcion, s.Precio Precio, s.DuracionMinutos Duracion
-                    from ${AppointmentTable} c
+                    SELECT 
+                      c.IdCita AS id,
+                      s.Nombre AS service,
+                      e.Nombre AS specie,
+                      s.Descripcion AS description,
+                      s.Precio AS price,
+                      s.DuracionMinutos AS duration
+                    FROM ${AppointmentTable} c
                     JOIN ${ServicesTable} s ON c.IdServicio = s.IdServicio
                     JOIN ${SpeciesTable} e ON e.IdEspecie = c.IdEspecie
-                    where IdUsuario = @IdUsuario`);
+                    WHERE IdUsuario = @IdUsuario`);
       if (result.recordset.length === 0) {
         return new Error("No appointments found for this user");
       }

@@ -14,8 +14,12 @@ export class FrontService {
     try {
       const pool = await poolPromise;
       const result = await pool.request()
-        .query(`select Specie_Id, Specie_Name from ${SpecieTable}
-                        order by Specie_Id`);
+        .query(`
+          SELECT 
+            Specie_Id AS id, 
+            Specie_Name AS name 
+          FROM ${SpecieTable} 
+          ORDER BY Specie_Id`);
       if (result.recordset.length === 0) {
         return [];
       }
@@ -29,27 +33,27 @@ export class FrontService {
   getServicesBySpecie = async (specieId) => {
     try {
       const pool = await poolPromise;
-      const result = await pool.request().input("Id", sql.Int, specieId).query(`
-                SELECT
-                    s.Service_Id AS IdServicio,
-                    s.Service_Name AS NombreServicio,
-                    s.Service_Description AS Descripcion,
-                    s.Service_MinutesDuration AS DuracionMinutos,
-                    s.Service_Price AS Precio,
-                    c.Field_Id AS IdCampo,
-                    c.Field_Description AS NombreCampo,
-                    c.Field_Type AS TipoCampo,
-                    c.Field_IsRequired AS EsRequerido,
-                    os.OptionsSelect_Id AS IdOpcion,
-                    os.OptionsSelect_Value AS ValorOpcion
-                FROM ${ServiceTable} s
-                JOIN ${SpecieServiceTable} ss ON s.Service_Id = ss.ServiceId
-                JOIN ${ServiceFieldTable} sc ON s.Service_Id = sc.ServiceId
-                JOIN ${FieldTable} c ON sc.FieldId = c.Field_Id
-                LEFT JOIN ${FieldsOptionTable} os ON c.Field_Id = os.OptionsSelect_FieldId
-                WHERE ss.SpecieId = @Id AND s.Service_IsVisibleToUser = 1
-                ORDER BY s.Service_Id, c.Field_Id;
-            `);
+    const result = await pool.request().input("Id", sql.Int, specieId).query(`
+        SELECT
+          s.Service_Id AS id,
+          s.Service_Name AS name,
+          s.Service_Description AS description,
+          s.Service_MinutesDuration AS duration,
+          s.Service_Price AS price,
+          c.Field_Id AS fieldId,
+          c.Field_Description AS fieldName,
+          c.Field_Type AS fieldType,
+          c.Field_IsRequired AS IsRequired,
+          os.OptionsSelect_Id AS optionId,
+          os.OptionsSelect_Value AS optionValue
+        FROM ${ServiceTable} s
+        JOIN ${SpecieServiceTable} ss ON s.Service_Id = ss.ServiceId
+        JOIN ${ServiceFieldTable} sc ON s.Service_Id = sc.ServiceId
+        JOIN ${FieldTable} c ON sc.FieldId = c.Field_Id
+        LEFT JOIN ${FieldsOptionTable} os ON c.Field_Id = os.OptionsSelect_FieldId
+        WHERE ss.SpecieId = @Id AND s.Service_IsVisibleToUser = 1
+        ORDER BY s.Service_Id, c.Field_Id;
+      `);
 
       if (result.recordset.length === 0) {
         return []; // Retorna un array vacío en lugar de un error si no hay servicios
@@ -57,33 +61,33 @@ export class FrontService {
 
       const servicios = {};
       result.recordset.forEach((row) => {
-        if (!servicios[row.IdServicio]) {
-          servicios[row.IdServicio] = {
-            IdServicio: row.IdServicio,
-            Nombre: row.NombreServicio,
-            Descripcion: row.Descripcion,
-            DuracionMinutos: row.DuracionMinutos,
-            Precio: row.Precio,
+        if (!servicios[row.id]) {
+          servicios[row.id] = {
+            IdServicio: row.id,
+            Nombre: row.name,
+            Descripcion: row.description,
+            DuracionMinutos: row.duration,
+            Precio: row.price,
             Campos: {}, // Usamos un objeto para evitar campos duplicados
           };
         }
 
         // Agrupa los campos dentro de cada servicio
-        if (!servicios[row.IdServicio].Campos[row.IdCampo]) {
-          servicios[row.IdServicio].Campos[row.IdCampo] = {
-            IdCampo: row.IdCampo,
-            NombreCampo: row.NombreCampo,
-            TipoCampo: row.TipoCampo,
-            EsRequerido: row.EsRequerido,
+        if (!servicios[row.id].Campos[row.fieldId]) {
+          servicios[row.id].Campos[row.fieldId] = {
+            IdCampo: row.fieldId,
+            NombreCampo: row.fieldName,
+            TipoCampo: row.fieldType,
+            EsRequerido: row.IsRequired,
             Opciones: [], // Array para las opciones del campo
           };
         }
 
         // Agrega las opciones al campo correspondiente si existen
-        if (row.IdOpcion) {
-          servicios[row.IdServicio].Campos[row.IdCampo].Opciones.push({
-            IdOpcion: row.IdOpcion,
-            ValorOpcion: row.ValorOpcion,
+        if (row.optionId) {
+          servicios[row.id].Campos[row.fieldId].Opciones.push({
+            IdOpcion: row.optionId,
+            ValorOpcion: row.optionValue,
           });
         }
       });
@@ -97,7 +101,7 @@ export class FrontService {
       return resultadoFinal;
     } catch (error) {
       console.error("Error buscando servicios de especie:", error);
-      return new Error("Error buscando servicios de especie");
+      throw new Error("Error buscando servicios de especie");
     }
   };
 }

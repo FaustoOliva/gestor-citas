@@ -12,19 +12,27 @@ export class PetService {
       const pool = await poolPromise;
       const result = await pool.request().input("IdUsuario", sql.Int, userId)
         .query(`
-                    SELECT Pet_Id, Pet_Name, Pet_Breed, Specie_Name, Pet_Weight, Pet_BirthDate
-                    FROM ${PetTable}
-                    join ${SpecieTable} on Specie_Id = Pet_SpecieId
-                    join ${UserTable} on User_Id = Pet_UserId and User_Id = @IdUsuario
-                    WHERE Pet_IsDeleted = 0
+              SELECT 
+                Pet_Id AS id,
+                Pet_Name AS name,
+                Pet_Breed AS breed,
+                Specie_Id AS specieId,
+                Specie_Name AS specieName,
+                Pet_Weight AS weight,
+                Pet_BirthDate AS birthDate,
+                Pet_Size AS size
+              FROM ${PetTable}
+              JOIN ${SpecieTable} ON Specie_Id = Pet_SpecieId
+              JOIN ${UserTable} ON User_Id = Pet_UserId AND User_Id = @IdUsuario
+              WHERE Pet_IsDeleted = 0
                 `);
       if (result.recordset.length === 0) {
-        return new Error("No pets found for this user");
+        throw new Error("No pets found for this user");
       }
       return result.recordset;
     } catch (error) {
       console.error("Error fetching pets by user ID:", error);
-      return new Error("Error fetching pets by user ID");
+      throw new Error("Error fetching pets by user ID");
     }
   };
 
@@ -32,18 +40,25 @@ export class PetService {
     try {
       const pool = await poolPromise;
       const result = await pool.request().input("PetId", sql.Int, petId).query(`
-                    SELECT Pet_Id, Pet_Name, Pet_Breed, Pet_BirthDate, Pet_Size, Pet_Weight, Specie_Name
+                    SELECT 
+                      Pet_Id AS id,
+                      Pet_Name AS name,
+                      Pet_Breed AS breed,
+                      Pet_BirthDate AS birthDate,
+                      Pet_Size AS size,
+                      Pet_Weight AS weight,
+                      Specie_Name AS specie
                     FROM ${PetTable} 
-                    join ${SpecieTable} on Specie_Id = Pet_SpecieId
-                    WHERE Pet_Id = @PetId and Pet_IsDeleted = 0
+                    JOIN ${SpecieTable} ON Specie_Id = Pet_SpecieId
+                    WHERE Pet_Id = @PetId AND Pet_IsDeleted = 0
                 `);
       if (result.recordset.length === 0) {
-        return new Error("Pet not found");
+        throw new Error("Pet not found");
       }
       return result.recordset[0];
     } catch (error) {
       console.error("Error fetching pet by ID:", error);
-      return new Error("Error fetching pet by ID");
+      throw new Error("Error fetching pet by ID");
     }
   };
 
@@ -51,19 +66,24 @@ export class PetService {
     try {
       const pool = await poolPromise;
       const result = await pool.request().query(`
-                    select Pet_Id, Pet_Name, Pet_Breed, Specie_Name, User_Name + ' ' + User_Lastname Owner_Name 
-                    from ${PetTable}
-                    join ${SpecieTable} on Specie_Id = Pet_SpecieId
-                    join ${UserTable} on User_Id = Pet_UserId
+                    SELECT 
+                      Pet_Id AS id,
+                      Pet_Name AS name,
+                      Pet_Breed AS breed,
+                      Specie_Name AS specieName,
+                      (User_Name + ' ' + User_Lastname) AS ownerName
+                    FROM ${PetTable}
+                    JOIN ${SpecieTable} ON Specie_Id = Pet_SpecieId
+                    JOIN ${UserTable} ON User_Id = Pet_UserId
                     WHERE Pet_IsDeleted = 0
                 `);
       if (result.recordset.length === 0) {
-        return new Error("No pets found");
+        throw new Error("No pets found");
       }
       return result.recordset;
     } catch (error) {
       console.error("Error fetching pets:", error);
-      return new Error("Error fetching pets");
+      throw new Error("Error fetching pets");
     }
   };
 
@@ -72,23 +92,23 @@ export class PetService {
       const pool = await poolPromise;
       const result = await pool
         .request()
-        .input("Nombre", sql.NVarChar, pet.nombre)
-        .input("Especie", sql.Int, pet.especieId)
-        .input("Raza", sql.NVarChar, pet.raza)
-        .input("FechaNac", sql.Date, pet.fechaNac)
-        .input("Tamaño", sql.NVarChar, pet.tamaño)
-        .input("Peso", sql.Float, pet.peso)
-        .input("IdUsuario", sql.Int, pet.idUsuario).query(`
+        .input("Nombre", sql.NVarChar, pet.name)
+        .input("Especie", sql.Int, pet.specieId)
+        .input("Raza", sql.NVarChar, pet.breed)
+        .input("FechaNac", sql.Date, pet.birthDate)
+        .input("Tamaño", sql.NVarChar, pet.size)
+        .input("Peso", sql.Float, pet.weight)
+        .input("IdUsuario", sql.Int, pet.userId).query(`
                     INSERT INTO ${PetTable} (Pet_Name, Pet_SpecieId, Pet_Breed, Pet_BirthDate, Pet_Size, Pet_UserId, Pet_Weight, Pet_IsDeleted)
                     VALUES (@Nombre, @Especie, @Raza, @FechaNac, @Tamaño, @IdUsuario, @Peso, 0)
                 `);
       if (result.rowsAffected[0] === 0) {
-        return new Error("Error creating pet");
+        throw new Error("Error creating pet");
       }
       return true;
     } catch (error) {
       console.error("Error creating pet:", error);
-      return new Error("Error creating pet");
+      throw new Error("Error creating pet");
     }
   };
 
@@ -97,17 +117,17 @@ export class PetService {
       const pool = await poolPromise;
       const result = await pool.request().input("IdMascota", sql.Int, petId)
         .query(`
-                    UPDATE ${PetTable}
-                    SET Pet_IsDeleted = 1
-                    WHERE Pet_Id = @IdMascota 
+              UPDATE ${PetTable}
+                SET Pet_IsDeleted = 1
+              WHERE Pet_Id = @IdMascota 
                 `);
       if (result.rowsAffected[0] === 0) {
-        return new Error("Error deleting pet");
+        throw new Error("Error deleting pet");
       }
       return true;
     } catch (error) {
       console.error("Error deleting pet:", error);
-      return new Error("Error deleting pet");
+      throw new Error("Error deleting pet");
     }
   };
 
@@ -117,21 +137,22 @@ export class PetService {
       const result = await pool
         .request()
         .input("IdMascota", sql.Int, petId)
-        .input("Raza", sql.NVarChar, petData.raza)
-        .input("FechaNac", sql.Date, petData.fechaNac)
-        .input("Tamaño", sql.NVarChar, petData.tamaño)
-        .input("Peso", sql.Float, petData.peso).query(`
+        .input("Nombre", sql.NVarChar, petData.name)
+        .input("Raza", sql.NVarChar, petData.breed)
+        .input("FechaNac", sql.Date, petData.birthDate)
+        .input("Tamaño", sql.NVarChar, petData.size)
+        .input("Peso", sql.Float, petData.weight).query(`
                     UPDATE ${PetTable}
-                    SET Pet_Breed = @Raza, Pet_BirthDate = @FechaNac, Pet_Size = @Tamaño, Pet_Weight = @Peso
+                      SET Pet_Name = @Nombre, Pet_Breed = @Raza, Pet_BirthDate = @FechaNac, Pet_Size = @Tamaño, Pet_Weight = @Peso
                     WHERE Pet_Id = @IdMascota
                 `);
       if (result.rowsAffected[0] === 0) {
-        return new Error("Error modifying pet");
+        throw new Error("Error modifying pet");
       }
       return true;
     } catch (error) {
       console.error("Error modifying pet:", error);
-      return new Error("Error modifying pet");
+      throw new Error("Error modifying pet");
     }
   };
 }
