@@ -12,7 +12,6 @@ import {
   Badge,
   Modal,
 } from "react-bootstrap";
-//import { getAppointments, updateAppointmentStatus, deleteAppointment } from '../services/appointmentsAdminService';
 import { getAppointments } from "../services/appointment";
 
 export const filterAppointments = (appointments, filters) => {

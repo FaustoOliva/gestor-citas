@@ -1,6 +1,6 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import VerifyForm from "../components/VerifyForm";
+import VerifyForm from "../components/auth/VerifyForm";
 
 const VerifyPage = () => {
   return (

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Card, Alert, Spinner } from "react-bootstrap";
-import { logInUser } from "../services/auth.js";
+import { logInUser } from "../../services/auth.js";
 import { useNavigate } from "react-router-dom";
+
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");

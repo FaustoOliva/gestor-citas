@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import {
   Form,
   Button,
@@ -9,8 +10,8 @@ import {
   Card,
   Alert,
 } from "react-bootstrap";
-import { createAppointment } from "../services/appointment.js";
-import { getSpecies, getServicesBySpecie } from "../services/front.js";
+import { createAppointment } from "../../services/appointment.js";
+import { getSpecies, getServicesBySpecie } from "../../services/front.js";
 
 const groupFields = (fieldsArray) => {
   const grouped = {};
@@ -369,6 +370,10 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
       </Row>
     </Container>
   );
+};
+
+CreateAppointmentForm.propTypes = {
+  onAppointmentCreated: PropTypes.func.isRequired
 };
 
 export default CreateAppointmentForm;

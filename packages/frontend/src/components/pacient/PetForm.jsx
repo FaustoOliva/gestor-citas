@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Card, Spinner, Alert } from "react-bootstrap";
-import { createPet } from "../services/pet.js";
-import { getSpecies } from "../services/front.js";
+import { createPet } from "../../services/pet.js";
+import { getSpecies } from "../../services/front.js";
+import PropTypes from 'prop-types';
+
 
 const CreatePetForm = ({ userId, onPetCreated }) => {
   const [name, setName] = useState("");
@@ -187,6 +189,11 @@ const CreatePetForm = ({ userId, onPetCreated }) => {
       </Card.Body>
     </Card>
   );
+};
+
+CreatePetForm.propTypes = {
+  userId: PropTypes.number.isRequired,
+  onPetCreated: PropTypes.func.isRequired,
 };
 
 export default CreatePetForm;

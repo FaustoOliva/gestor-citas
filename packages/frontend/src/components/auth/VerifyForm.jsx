@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Form, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { verifyEmail } from "../services/auth";
+import { verifyEmail } from "../../services/auth";
+import PropTypes from "prop-types";
 
 const VerifyForm = () => {
   const [code, setCode] = useState(new Array(6).fill(""));
@@ -93,7 +94,7 @@ const VerifyForm = () => {
     } catch (err) {
       setError(
         err.message ||
-          "Error al verificar el código. Por favor, intenta nuevamente.",
+          "Error al verificar el código. Por favor, intenta nuevamente."
       );
       setCode(new Array(6).fill(""));
       document.getElementById("digit-0").focus();

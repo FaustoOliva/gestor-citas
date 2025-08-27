@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, ButtonGroup } from "react-bootstrap";
-import CreateAppointmentForm from "../components/AppointmentForm";
-import Appointments from "../components/Appointments";
-import CreatePetForm from "../components/PetForm";
-import Pets from "../components/Pets";
+import CreateAppointmentForm from "../components/pacient/AppointmentForm";
+import Appointments from "../components/pacient/Appointments";
+import CreatePetForm from "../components/pacient/PetForm";
+import Pets from "../components/pacient/Pets";
 
 const PacientPage = () => {
   const [currentUser, setCurrentUser] = useState(null);

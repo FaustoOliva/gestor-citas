@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
+
 import {
   Container,
   Card,
@@ -8,7 +10,7 @@ import {
   Badge,
   Button,
 } from "react-bootstrap";
-import { getAppointmentsByPetId } from "../services/appointment";
+import { getAppointmentsByPetId } from "../../services/appointment";
 
 const AppointmentsList = ({ userId, refreshTrigger }) => {
   const [appointments, setAppointments] = useState([]);
@@ -113,6 +115,11 @@ const AppointmentsList = ({ userId, refreshTrigger }) => {
       </ListGroup>
     </Container>
   );
+};
+
+AppointmentsList.propTypes = {
+  userId: PropTypes.number.isRequired,
+  refreshTrigger: PropTypes.number.isRequired,
 };
 
 export default AppointmentsList;

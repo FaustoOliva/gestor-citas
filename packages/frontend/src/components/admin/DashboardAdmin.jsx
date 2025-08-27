@@ -1,6 +1,7 @@
 import React from "react";
-import Card from "react-bootstrap/Card";
-import Table from "react-bootstrap/Table";
+import Card from "react-bootstrap";
+import PropTypes from 'prop-types';
+
 import {
   BarChart,
   Bar,
@@ -89,5 +90,9 @@ function DashboardAdmin({ listaCitas }) {
     </div>
   );
 }
+
+DashboardAdmin.propTypes = {
+  listaCitas: PropTypes.array.isRequired,
+};
 
 export default DashboardAdmin;
