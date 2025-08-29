@@ -5,7 +5,6 @@ const router = Router();
 const petService = new PetService();
 
 router.post("", async (req, res) => {
-  console.log("This is a function on the controller");
   if (!req.body) {
     return res.status(400).json({ error: "Invalid request body" });
   }

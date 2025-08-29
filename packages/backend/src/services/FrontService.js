@@ -13,8 +13,7 @@ export class FrontService {
   getSpecies = async () => {
     try {
       const pool = await poolPromise;
-      const result = await pool.request()
-        .query(`
+      const result = await pool.request().query(`
           SELECT 
             Specie_Id AS id, 
             Specie_Name AS name 
@@ -33,7 +32,7 @@ export class FrontService {
   getServicesBySpecie = async (specieId) => {
     try {
       const pool = await poolPromise;
-    const result = await pool.request().input("Id", sql.Int, specieId).query(`
+      const result = await pool.request().input("Id", sql.Int, specieId).query(`
         SELECT
           s.Service_Id AS id,
           s.Service_Name AS name,

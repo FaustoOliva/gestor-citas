@@ -11,12 +11,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-
 // Middleware para loguear hora y endpoint
 app.use((req, res, next) => {
   const now = new Date().toISOString();
   console.log(`[${now}] ${req.method} ${req.originalUrl}`);
-  console.log(req.body ?? {}); // Log del body de la solicitud
+  console.log(req.body ?? null); // Log del body de la solicitud
   next();
 });
 
@@ -24,7 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use
+app.use;
 
 app.use("/users", UserRouter);
 app.use("/appointments", AppointmentRouter);

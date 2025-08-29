@@ -9,8 +9,6 @@ const userService = new UserService();
 
 export class AuthService {
   registerUser = async (User) => {
-    console.log("This is a function on the service");
-    
     User.password = await hashingPassword(User.password);
     if (User.password instanceof Error) {
       throw new Error("ERROR: No se pudo hashear la contraseña.");
@@ -20,14 +18,12 @@ export class AuthService {
   };
 
   loginUser = async (email, password) => {
-    console.log("This is a function on the service");
-
     try {
       const user = await userService.getUserByEmail(email);
       if (user instanceof Error || !user) {
         return new Error("ERROR: No se pudo obtener el usuario.");
       }
-      console.log("Usuario obtenido:", user);
+
       const passwordMatch = await comparePassword(password, user.password);
       if (passwordMatch instanceof Error || !passwordMatch) {
         return new Error("Contraseña incorrecta");
@@ -41,7 +37,6 @@ export class AuthService {
   };
 
   sendMailConfirmation = async (email) => {
-    console.log("This is a function on the service");
     const codigoGenerado = Math.floor(100000 + Math.random() * 900000); // Genera un código aleatorio de 6 dígitos
 
     try {
@@ -50,7 +45,6 @@ export class AuthService {
         console.error("Error al obtener el usuario:", user);
         return new Error("ERROR: No se pudo obtener el usuario.");
       }
-      console.log("Usuario obtenido:", user);
 
       const response = await userService.putFieldUserById(
         user.Id,
@@ -82,8 +76,6 @@ export class AuthService {
   };
 
   verifyEmail = async (email, codigo) => {
-    console.log("This is a function on the service");
-
     try {
       const user = await userService.getUserByEmail(email);
       if (user instanceof Error) {

@@ -8,7 +8,6 @@ const hashingPassword = (password) => {
         console.error("Error hashing password:", err);
         reject(err);
       } else {
-        console.log("Hashed password:", hash);
         resolve(hash);
       }
     });
@@ -22,7 +21,6 @@ const comparePassword = (password, hash) => {
         console.error("Error comparing password:", err);
         reject(err);
       } else {
-        console.log("Password match result:", result);
         resolve(result);
       }
     });

@@ -5,7 +5,6 @@ const router = Router();
 const userService = new UserService();
 
 router.delete("/:id", async (req, res) => {
-  console.log("This is a function on the controller");
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) {
     return res
@@ -31,7 +30,6 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  console.log("This is a function on the controller");
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) {
     return res
@@ -55,7 +53,6 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("", async (req, res) => {
-  console.log("This is a function on the controller");
   try {
     const data = await userService.getUsers();
     if (data instanceof Error) {
@@ -73,15 +70,12 @@ router.get("", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-  console.log("This is a function on the controller");
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId) || !req.body) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "ERROR: Se debe proporcionar un ID válido y un cuerpo de solicitud.",
-      });
+    return res.status(400).json({
+      error:
+        "ERROR: Se debe proporcionar un ID válido y un cuerpo de solicitud.",
+    });
   }
   try {
     const mensaje = await userService.updateUser(userId, req.body);

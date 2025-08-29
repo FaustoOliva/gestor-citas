@@ -27,7 +27,7 @@ export class PetService {
               WHERE Pet_IsDeleted = 0
                 `);
       if (result.recordset.length === 0) {
-        throw new Error("No pets found for this user");
+        return [];
       }
       return result.recordset;
     } catch (error) {
@@ -53,7 +53,7 @@ export class PetService {
                     WHERE Pet_Id = @PetId AND Pet_IsDeleted = 0
                 `);
       if (result.recordset.length === 0) {
-        throw new Error("Pet not found");
+        return [];
       }
       return result.recordset[0];
     } catch (error) {
@@ -78,7 +78,7 @@ export class PetService {
                     WHERE Pet_IsDeleted = 0
                 `);
       if (result.recordset.length === 0) {
-        throw new Error("No pets found");
+        return [];
       }
       return result.recordset;
     } catch (error) {

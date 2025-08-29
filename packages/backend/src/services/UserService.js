@@ -7,7 +7,6 @@ const userTable = process.env.DB_USER_TABLE;
 
 export class UserService {
   deleteUser = async (id) => {
-    console.log("This is a function on the service");
     const text_exito = "Se ha borrado con exito.";
 
     try {
@@ -16,7 +15,6 @@ export class UserService {
           UPDATE ${userTable} 
             SET User_IsDeleted = 1 
           WHERE Id = @Id`);
-      console.log(response);
 
       if (response.rowsAffected[0] === 0) {
         throw new Error("ERROR: No se pudo eliminar el usuario.");
@@ -29,8 +27,6 @@ export class UserService {
   };
 
   getUserById = async (id) => {
-    console.log("This is a function on the service");
-
     let user;
 
     try {
@@ -59,7 +55,6 @@ export class UserService {
   };
 
   getUserByEmail = async (email) => {
-    console.log("This is a function on the service");
     let user;
 
     try {
@@ -89,14 +84,12 @@ export class UserService {
   };
 
   putFieldUserById = async (id, field, value) => {
-    console.log("This is a function on the service");
-    console.log(id, field, value);
     const fieldInfo = new User().fields[field];
     if (!fieldInfo) {
       throw new Error(`ERROR: El campo ${field} no es válido.`);
     }
     const text_exito = "Se ha actualizado con exito.";
-    console.log(typeof value);
+
     try {
       const pool = await poolPromise;
       const response = await pool
@@ -106,10 +99,10 @@ export class UserService {
           UPDATE ${userTable} 
             SET ${field} = @${field} 
           WHERE Id = @Id`);
-      console.log(response);
+
       if (response.rowsAffected[0] === 0) {
         throw new Error(
-          `ERROR: No se pudo actualizar el campo ${field} del usuario.`
+          `ERROR: No se pudo actualizar el campo ${field} del usuario.`,
         );
       }
       return text_exito;
@@ -120,7 +113,6 @@ export class UserService {
   };
 
   getUsers = async () => {
-    console.log("This is a function on the service");
     try {
       const pool = await poolPromise;
       const result = await pool.request().query(`SELECT 
@@ -134,7 +126,7 @@ export class UserService {
                     FROM ${userTable} 
                     WHERE User_IsEmailVerified = 1 AND User_IsDeleted = 0`);
       if (result.recordset.length === 0) {
-        throw new Error("No se encontraron usuarios");
+        return [];
       }
       return result.recordset;
     } catch (error) {
@@ -144,8 +136,6 @@ export class UserService {
   };
 
   createUser = async (user) => {
-    console.log("This is a function on the service");
-
     try {
       const pool = await poolPromise;
       const response = await pool
@@ -161,9 +151,9 @@ export class UserService {
           `INSERT INTO ${userTable}
           (User_Lastname, User_Name, User_Email, User_Phone, User_RegisterDate, User_PasswordHash, User_IsAdmin) 
           VALUES (@Apellido, @Nombre, @Email, @Telefono, @FechaRegistro, @PasswordHash, @EsAdmin)
-          `
+          `,
         );
-      console.log(response);
+
       if (response.rowsAffected[0] === 0) {
         throw new Error("ERROR: No se pudo crear el usuario.");
       }
@@ -176,7 +166,6 @@ export class UserService {
   };
 
   updateUser = async (id, user) => {
-    console.log("This is a function on the service");
     try {
       const pool = await poolPromise;
       const response = await pool
