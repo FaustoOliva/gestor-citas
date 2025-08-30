@@ -23,9 +23,9 @@ router.post("", async (req, res) => {
       return res.status(400).json({ error: response.message });
     }
     if (response) {
-      req.body.details.forEach((element) => {
-        appointmentService.createAppointmentDetails(response.id, element);
-      });
+      for (const element of req.body.details) {
+        await appointmentService.createAppointmentDetails(response.id, element);
+      }
       return res.status(201).json({
         message: "Appointment created successfully",
         appointmentId: response.id,
@@ -36,7 +36,7 @@ router.post("", async (req, res) => {
   }
 });
 
-router.get("/user/:userId", async (req, res) => {
+router.get("/users/:userId", async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
   if (isNaN(userId)) {
     return res.status(400).json({ error: "Invalid user ID" });
@@ -81,6 +81,22 @@ router.get("", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid appointment ID" });
+  }
+  try {
+    const appointment = await appointmentService.getAppointmentById(id);
+    if (appointment instanceof Error) {
+      return res.status(400).json({ error: appointment.message });
+    }
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) {
@@ -97,7 +113,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid appointment ID" });

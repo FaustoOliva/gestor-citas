@@ -69,7 +69,7 @@ router.get("", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId) || !req.body) {
     return res.status(400).json({
