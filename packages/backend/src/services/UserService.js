@@ -38,8 +38,8 @@ export class UserService {
             User_Apellido AS lastname,
             User_Email AS email,
             User_Phone AS phone,
-            User_RegisterDate AS registerDate,
-            User_IsEmailVerified AS isEmailVerified
+            User_IsEmailVerified AS isEmailVerified,
+            User_IsAdmin AS isAdmin
           FROM ${userTable} 
           WHERE User_Id = @Id`);
 
@@ -67,8 +67,8 @@ export class UserService {
                         User_Password AS password,
                         User_Email AS email, 
                         User_Phone AS phone,
-                        User_RegisterDate AS registerDate,
-                        User_IsEmailVerified AS isEmailVerified
+                        User_IsEmailVerified AS isEmailVerified,
+                        User_IsAdmin AS isAdmin
                     FROM ${userTable} 
                     WHERE User_Email = @Email`);
 
@@ -84,28 +84,27 @@ export class UserService {
   };
 
   putFieldUserById = async (id, field, value) => {
-    const fieldInfo = new User().fields[field];
-    if (!fieldInfo) {
-      throw new Error(`ERROR: El campo ${field} no es válido.`);
-    }
-    const text_exito = "Se ha actualizado con exito.";
+    // const fieldInfo = new User().fields[field];
+    // if (!fieldInfo) {
+    //   throw new Error(`ERROR: El campo ${field} no es válido.`);
+    // }
 
     try {
       const pool = await poolPromise;
       const response = await pool
         .request()
         .input("Id", sql.Int, id ?? "")
-        .input(field, sql.NVarChar, String(value) ?? "").query(`
+        .input("value", sql.NVarChar, String(value) ?? "").query(`
           UPDATE ${userTable} 
-            SET ${field} = @${field} 
-          WHERE Id = @Id`);
+            SET ${field} = @value 
+          WHERE User_Id = @Id`);
 
       if (response.rowsAffected[0] === 0) {
         throw new Error(
-          `ERROR: No se pudo actualizar el campo ${field} del usuario.`,
+          `ERROR: No se pudo actualizar el campo ${field} del usuario.`
         );
       }
-      return text_exito;
+      return 1;
     } catch (error) {
       console.error("Error al actualizar el campo del usuario:", error);
       throw error;
@@ -121,10 +120,9 @@ export class UserService {
                         User_Apellido AS lastname, 
                         User_Email AS email, 
                         User_Phone AS phone,
-                        User_RegisterDate AS registerDate,
-                        User_IsEmailVerified AS isEmailVerified
+                        User_IsEmailVerified AS isEmailVerified,
                     FROM ${userTable} 
-                    WHERE User_IsEmailVerified = 1 AND User_IsDeleted = 0`);
+                    WHERE User_IsEmailVerified = 1 AND User_IsDeleted = 0 AND User_IsAdmin = 0`);
       if (result.recordset.length === 0) {
         return [];
       }
@@ -151,14 +149,14 @@ export class UserService {
           `INSERT INTO ${userTable}
           (User_Lastname, User_Name, User_Email, User_Phone, User_RegisterDate, User_PasswordHash, User_IsAdmin) 
           VALUES (@Apellido, @Nombre, @Email, @Telefono, @FechaRegistro, @PasswordHash, @EsAdmin)
-          `,
+          `
         );
 
       if (response.rowsAffected[0] === 0) {
         throw new Error("ERROR: No se pudo crear el usuario.");
       }
 
-      return text_exito;
+      return true;
     } catch (error) {
       console.error("Error al registrar usuario:", error);
       throw error;

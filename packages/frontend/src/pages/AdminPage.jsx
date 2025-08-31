@@ -17,20 +17,18 @@ import { getAppointments } from "../services/appointment";
 export const filterAppointments = (appointments, filters) => {
   // Lógica de filtrado
   if (filters.date) {
-    appointments = appointments.filter((app) => app?.date === filters.date);
+    appointments = appointments.filter((app) => app?.date.slice(0, 10) == filters.date);
   }
   if (filters.status) {
-    appointments = appointments.filter(
-      (app) => app?.EstadoCita === filters.status,
-    );
+    appointments = appointments.filter((app) => app?.status == filters.status);
   }
   if (filters.search) {
     const searchTerm = filters.search.toLowerCase();
     appointments = appointments.filter(
       (app) =>
-        app?.NombreEspecie.toLowerCase().includes(searchTerm) ||
-        app?.NombreUsuario.toLowerCase().includes(searchTerm) ||
-        app?.NombreServicio.toLowerCase().includes(searchTerm),
+        app?.pet.specieName.toLowerCase().includes(searchTerm) ||
+        app?.user.name.toLowerCase().includes(searchTerm) ||
+        app?.service.name.toLowerCase().includes(searchTerm)
     );
   }
 
@@ -78,6 +76,15 @@ const AdminPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString;
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   const confirmDelete = (appointment) => {
@@ -179,7 +186,7 @@ const AdminPage = () => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Mascota</th>
+            <th>Especie</th>
             <th>Dueño</th>
             <th>Servicio</th>
             <th>Fecha</th>
@@ -190,27 +197,32 @@ const AdminPage = () => {
         <tbody>
           {appointments.length > 0 ? (
             appointments.map((app) => (
-              <tr key={app.IdCita}>
-                <td>{app.IdCita}</td>
-                <td>{app.NombreEspecie}</td>
-                <td>{app.NombreUsuario}</td>
-                <td>{app.NombreServicio}</td>
+              <tr key={app.id}>
+                <td>{app.id}</td>
+                <td>{app.pet.specieName}</td>
+                <td>{app.user.name}</td>
+                <td>{app.service.name}</td>
                 <td>
-                  {app.date} {app.time}
+                  {formatDate(app.date)}
                 </td>
                 <td>
-                  <Badge bg={getStatusVariant(app.EstadoCita)}>
-                    {app.EstadoCita.toUpperCase()}
+                  <Badge bg={getStatusVariant(app.status)}>
+                    {app.status.toUpperCase()}
                   </Badge>
                 </td>
                 <td>
                   <div className="d-flex gap-2">
                     <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => handleStatusUpdate(app.id, "Confirmada")}
+                    >
+                      Ver
+                    </Button>
+                    <Button
                       variant="outline-success"
                       size="sm"
-                      onClick={() =>
-                        handleStatusUpdate(app.IdCita, "Confirmada")
-                      }
+                      onClick={() => handleStatusUpdate(app.id, "Confirmada")}
                     >
                       Confirmar
                     </Button>

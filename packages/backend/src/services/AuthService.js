@@ -14,7 +14,12 @@ export class AuthService {
       throw new Error("ERROR: No se pudo hashear la contraseña.");
     }
 
-    return await userService.createUser(User);
+    try {
+      return await userService.createUser(User);
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      throw new Error("ERROR: No se pudo registrar el usuario.");
+    }
   };
 
   loginUser = async (email, password) => {
@@ -48,7 +53,7 @@ export class AuthService {
 
       const response = await userService.putFieldUserById(
         user.Id,
-        "CodigoVerificacion",
+        "User_VerificationCode",
         codigoGenerado,
       );
       if (response instanceof Error) {
@@ -89,7 +94,7 @@ export class AuthService {
 
       const response = await userService.putFieldUserById(
         user.Id,
-        "EmailVerificado",
+        "User_IsEmailVerified",
         true,
       );
       if (response instanceof Error) {
@@ -101,6 +106,28 @@ export class AuthService {
     } catch (error) {
       console.error("Error en verifyEmail:", error);
       return new Error("ERROR: No se pudo procesar la verificación del email.");
+    }
+  };
+
+  renewPassword = async (email, newPassword) => {
+    const hashedPassword = await hashingPassword(newPassword);
+    if (hashedPassword instanceof Error) {
+      throw new Error("ERROR: No se pudo hashear la nueva contraseña.");
+    }
+
+    try {
+      const user = await userService.getUserByEmail(email);
+
+      await userService.putFieldUserById(
+        user.id,
+        "User_Password",
+        hashedPassword,
+      );
+
+      return "Contraseña renovada con éxito.";
+    } catch (error) {
+      console.error("Error en renewPassword:", error);
+      throw new Error("ERROR: No se pudo procesar la renovación de la contraseña.");
     }
   };
 }

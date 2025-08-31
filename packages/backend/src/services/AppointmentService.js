@@ -137,6 +137,7 @@ export class AppointmentService {
                       (U.User_Name + ' ' + U.User_Lastname) AS ownerName,
                       P.Pet_Id AS petId,
                       P.Pet_Name AS petName,
+                      SP.Specie_Name AS specieName,
                       S.Service_Name AS serviceName,
                       ST.Status_Description AS status
                     FROM ${AppointmentTable} AS A
@@ -152,9 +153,9 @@ export class AppointmentService {
       }
 
       const appointments = result.recordset.map((appointment) => ({
-        id: appointment.appointmentId,
-        date: appointment.appointmentDate,
-        status: appointment.appointmentStatus,
+        id: appointment.id,
+        date: appointment.date,
+        status: appointment.status,
         user: {
           id: appointment.userId,
           name: appointment.ownerName,
@@ -162,6 +163,7 @@ export class AppointmentService {
         pet: {
           id: appointment.petId,
           name: appointment.petName,
+          specieName: appointment.specieName,
         },
         service: {
           id: appointment.serviceId,

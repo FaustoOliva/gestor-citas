@@ -3,7 +3,6 @@ import { AuthService } from "../services/AuthService.js";
 const router = Router();
 const authService = new AuthService();
 
-// POST login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -24,7 +23,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// POST register
 router.post("/register", async (req, res) => {
   var nuevo = req.body;
   if (!nuevo?.nombre || !nuevo?.email || !nuevo?.password || !nuevo?.apellido) {
@@ -34,11 +32,9 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const response = await authService.registerUser(nuevo);
-    if (response instanceof Error) {
-      return res.status(500).json({ error: response.message });
-    }
-    return res.status(201).json({ message: response });
+    await authService.registerUser(nuevo);
+
+    return res.status(201).json({ message: "Usuario registrado con éxito." });
   } catch (err) {
     console.error("Error en registro:", err);
     return res
@@ -47,7 +43,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// GET send mail confirmation
 router.get("/send-mail-confirmation/:email", async (req, res) => {
   const { email } = req.params;
   if (!email) {
@@ -70,7 +65,6 @@ router.get("/send-mail-confirmation/:email", async (req, res) => {
   }
 });
 
-// GET verify email
 router.post("/verify-email", async (req, res) => {
   const { email, codigo } = req.body;
   if (!email || !codigo) {
@@ -90,6 +84,25 @@ router.post("/verify-email", async (req, res) => {
     return res
       .status(500)
       .json({ error: "ERROR: No se pudo verificar el email." });
+  }
+});
+
+router.post("/renew-password", async (req, res) => {
+  const { email, newPassword } = req.body;
+  if (!email || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: "ERROR: email y nueva contraseña son obligatorios." });
+  }
+
+  try {
+    await authService.renewPassword(email, newPassword);
+    return res.status(200).json({ message: "Contraseña renovada con éxito." });
+  } catch (err) {
+    console.error("Error al renovar contraseña:", err);
+    return res
+      .status(500)
+      .json({ error: "ERROR: No se pudo renovar la contraseña." });
   }
 });
 

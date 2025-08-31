@@ -10,10 +10,6 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegisterRedirect = () => {
-    navigate("/pacient");
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -33,7 +29,7 @@ const LoginForm = () => {
           localStorage.setItem("currentUser", JSON.stringify(data.user));
         }
         setIsLoading(false);
-        if (data.user?.EsAdmin) {
+        if (data.user?.isAdmin) {
           navigate("/admin");
         } else {
           navigate("/pacient");
