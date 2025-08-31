@@ -78,17 +78,20 @@ export class AppointmentService {
       const result = await pool.request().input("UserId", sql.Int, userId)
         .query(`
               SELECT
-                A.Appointment_Id AS appointmentId,
-                A.Appointment_Date AS appointmentDate,
+                A.Appointment_Id AS id,
+                A.Appointment_Date AS date,
                 P.Pet_Name AS petName,
                 S.Service_Name AS serviceName,
-                ST.Status_Description AS appointmentStatus
+                ST.Status_Description AS status,
+                S.Service_MinutesDuration AS durationMinutes,
+                S.Service_Price AS price,
+                S.Service_Description AS description
               FROM ${AppointmentTable} AS A
               JOIN ${PetTable} AS P ON A.Appointment_PetId = P.Pet_Id
               JOIN ${ServiceTable} AS S ON A.Appointment_ServiceId = S.Service_Id
               JOIN ${StatusTable} AS ST ON A.Appointment_StatusId = ST.Status_Id
               WHERE A.Appointment_UserId = @UserId
-              ORDER BY A.Appointment_Date DESC;`);
+              ORDER BY A.Appointment_Date ASC;`);
       if (result.recordset.length === 0) {
         return [];
       }
@@ -104,15 +107,15 @@ export class AppointmentService {
       const pool = await poolPromise;
       const result = await pool.request().input("PetId", sql.Int, petId).query(`
               SELECT
-                A.Appointment_Id AS appointmentId,
-                A.Appointment_Date AS appointmentDate,
+                A.Appointment_Id AS id,
+                A.Appointment_Date AS date,
                 S.Service_Name AS serviceName,
-                ST.Status_Description AS appointmentStatus
+                ST.Status_Description AS status
               FROM ${AppointmentTable} AS A
               JOIN ${ServiceTable} AS S ON A.Appointment_ServiceId = S.Service_Id
               JOIN ${StatusTable} AS ST ON A.Appointment_StatusId = ST.Status_Id
               WHERE A.Appointment_PetId = @PetId
-              ORDER BY A.Appointment_Date DESC;`);
+              ORDER BY A.Appointment_Date ASC;`);
       if (result.recordset.length === 0) {
         return [];
       }
@@ -128,14 +131,14 @@ export class AppointmentService {
       const pool = await poolPromise;
       const result = await pool.request().query(`
                     SELECT
-                      A.Appointment_Id AS appointmentId,
-                      A.Appointment_Date AS appointmentDate,
+                      A.Appointment_Id AS id,
+                      A.Appointment_Date AS date,
                       U.User_Id AS userId,
                       (U.User_Name + ' ' + U.User_Lastname) AS ownerName,
                       P.Pet_Id AS petId,
                       P.Pet_Name AS petName,
                       S.Service_Name AS serviceName,
-                      ST.Status_Description AS appointmentStatus
+                      ST.Status_Description AS status
                     FROM ${AppointmentTable} AS A
                     JOIN ${UserTable} AS U ON A.Appointment_UserId = U.User_Id
                     JOIN ${PetTable} AS P ON A.Appointment_PetId = P.Pet_Id
@@ -148,22 +151,22 @@ export class AppointmentService {
         return [];
       }
 
-      const appointments = result.recordset.map(appointment => ({
+      const appointments = result.recordset.map((appointment) => ({
         id: appointment.appointmentId,
         date: appointment.appointmentDate,
+        status: appointment.appointmentStatus,
         user: {
           id: appointment.userId,
-          name: appointment.ownerName
+          name: appointment.ownerName,
         },
         pet: {
           id: appointment.petId,
-          name: appointment.petName
+          name: appointment.petName,
         },
         service: {
           id: appointment.serviceId,
-          name: appointment.serviceName
+          name: appointment.serviceName,
         },
-        status: appointment.appointmentStatus
       }));
 
       return appointments;
@@ -225,15 +228,15 @@ export class AppointmentService {
         .request()
         .input("AppointmentId", sql.Int, appointmentId).query(`
               SELECT
-                A.Appointment_Id AS appointmentId,
-                A.Appointment_Date AS appointmentDate,
+                A.Appointment_Id AS id,
+                A.Appointment_Date AS date,
                 S.Service_Name AS serviceName,
                 S.Service_Id AS serviceId,
                 P.Pet_Name AS petName,
                 P.Pet_Id AS petId,
                 U.User_Name AS userName,
                 U.User_Id AS userId,
-                ST.Status_Description AS appointmentStatus
+                ST.Status_Description AS status
               FROM ${AppointmentTable} AS A
               JOIN ${UserTable} AS U ON A.Appointment_UserId = U.User_Id
               JOIN ${PetTable} AS P ON A.Appointment_PetId = P.Pet_Id
@@ -245,9 +248,9 @@ export class AppointmentService {
         return [];
       }
       const appointment = {
-        id: result.recordset[0].appointmentId,
-        date: result.recordset[0].appointmentDate,
-        status: result.recordset[0].appointmentStatus,
+        id: result.recordset[0].id,
+        date: result.recordset[0].date,
+        status: result.recordset[0].status,
         service: {
           id: result.recordset[0].serviceId,
           name: result.recordset[0].serviceName,

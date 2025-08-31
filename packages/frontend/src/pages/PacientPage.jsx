@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, ButtonGroup } from "react-bootstrap";
-import CreateAppointmentForm from "../components/pacient/AppointmentForm";
-import Appointments from "../components/pacient/Appointments";
-import CreatePetForm from "../components/pacient/PetForm";
-import Pets from "../components/pacient/Pets";
+import CreateAppointmentForm from "../components/pacient/appointments/AppointmentForm";
+import Appointments from "../components/pacient/appointments/Appointments";
+import CreatePetForm from "../components/pacient/pets/PetForm";
+import Pets from "../components/pacient/pets/Pets";
 
 const PacientPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -50,6 +50,7 @@ const PacientPage = () => {
       {activeView === "appointments" && (
         <>
           <CreateAppointmentForm
+            userId={currentUser ? currentUser.id : null}
             onAppointmentCreated={handleAppointmentCreated}
           />
           <Appointments

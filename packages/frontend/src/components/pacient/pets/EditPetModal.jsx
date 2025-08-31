@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const EditPetModal = ({
   show,
@@ -8,7 +9,6 @@ const EditPetModal = ({
   setPetToEdit,
   handleSave,
 }) => {
-    console.log(petToEdit)
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -40,16 +40,16 @@ const EditPetModal = ({
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Fecha Nacimiento</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={petToEdit.birthDate ?? ""}
-                  onChange={(e) =>
-                    setPetToEdit({
-                      ...petToEdit,
-                      birthDate: e.target.value,
-                    })
-                  }
-                />
+              <Form.Control
+                type="date"
+                value={petToEdit.birthDate ?? ""}
+                onChange={(e) =>
+                  setPetToEdit({
+                    ...petToEdit,
+                    birthDate: e.target.value,
+                  })
+                }
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Tamaño</Form.Label>
@@ -83,6 +83,14 @@ const EditPetModal = ({
       </Modal.Body>
     </Modal>
   );
+};
+
+EditPetModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  petToEdit: PropTypes.object,
+  setPetToEdit: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
 };
 
 export default EditPetModal;

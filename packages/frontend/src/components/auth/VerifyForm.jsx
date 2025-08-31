@@ -94,7 +94,7 @@ const VerifyForm = () => {
     } catch (err) {
       setError(
         err.message ||
-          "Error al verificar el código. Por favor, intenta nuevamente."
+          "Error al verificar el código. Por favor, intenta nuevamente.",
       );
       setCode(new Array(6).fill(""));
       document.getElementById("digit-0").focus();

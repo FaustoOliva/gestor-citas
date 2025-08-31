@@ -11,8 +11,7 @@ import {
 } from "react-bootstrap";
 import { registerUser, sendMailConfirmation } from "../../services/auth.js";
 import { useNavigate } from "react-router-dom";
-import PropTypes from 'prop-types';
-
+import PropTypes from "prop-types";
 
 const RegisterForm = () => {
   const [nombre, setNombre] = useState("");

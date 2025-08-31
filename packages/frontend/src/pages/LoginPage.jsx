@@ -6,7 +6,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
-    console.log("currentUser", currentUser);
   }, [navigate]);
 
   return (

@@ -47,7 +47,7 @@ export class PetService {
                       Pet_BirthDate AS birthDate,
                       Pet_Size AS size,
                       Pet_Weight AS weight,
-                      Specie_Name AS specie
+                      Specie_Name AS specieName
                     FROM ${PetTable} 
                     JOIN ${SpecieTable} ON Specie_Id = Pet_SpecieId
                     WHERE Pet_Id = @PetId AND Pet_IsDeleted = 0

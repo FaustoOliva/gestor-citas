@@ -13,7 +13,6 @@ export async function getPetById(petId) {
 }
 
 export async function createPet(petData) {
-  console.log(petData);
   return apiCall("/pets", {
     method: "POST",
     headers: {

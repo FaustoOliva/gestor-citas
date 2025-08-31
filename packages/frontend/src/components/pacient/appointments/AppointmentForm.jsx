@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import {
   Form,
   Button,
@@ -10,85 +10,82 @@ import {
   Card,
   Alert,
 } from "react-bootstrap";
-import { createAppointment } from "../../services/appointment.js";
-import { getSpecies, getServicesBySpecie } from "../../services/front.js";
+import { createAppointment } from "../../../services/appointment.js";
+import { getServicesBySpecie } from "../../../services/front.js";
+import { getPetsByUser } from "../../../services/pet.js";
 
 const groupFields = (fieldsArray) => {
   const grouped = {};
   fieldsArray.forEach((field) => {
-    if (field.TipoCampo === "select") {
+    if (field.type === "select") {
       // Si es un select, creamos o actualizamos un objeto con sus opciones
-      if (!grouped[field.IdCampo]) {
-        grouped[field.IdCampo] = {
+      if (!grouped[field.id]) {
+        grouped[field.id] = {
           ...field,
-          options: [],
+          options: field.options ?? [],
         };
       }
-      grouped[field.IdCampo].options.push(field.ValorOpcion);
     } else {
       // Para otros tipos de campos, simplemente los agregamos
-      grouped[field.IdCampo] = field;
+      grouped[field.id] = field;
     }
   });
 
   return Object.values(grouped);
 };
 
-const CreateAppointmentForm = ({ onAppointmentCreated }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [species, setSpecies] = useState([]);
-  const [selectedSpecies, setSelectedSpecies] = useState("");
+const CreateAppointmentForm = ({ userId, onAppointmentCreated }) => {
+  const [pets, setPets] = useState([]);
+  const [selectedPet, setSelectedPet] = useState("");
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState("");
   const [dynamicFields, setDynamicFields] = useState([]);
-  const [formValues, setFormValues] = useState({});
+  const [formValues, setFormValues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const currentServiceDetails = services.find(
-    (s) => s.IdServicio === parseInt(selectedService),
+    (s) => s.id === parseInt(selectedService),
   );
 
-  // Obtener especies
+  // Obtener mascotas
   useEffect(() => {
-    const fetchSpecies = async () => {
+    const fetchPets = async () => {
       setLoading(true);
       try {
-        const data = await getSpecies();
-        if (data instanceof Error) {
-          throw data;
-        }
-        setSpecies(data);
+        const data = await getPetsByUser(userId);
+
+        setPets(data);
         setError("");
       } catch (error) {
-        console.error("Error al obtener especies:", error);
+        console.error("Error al obtener mascotas:", error);
         setError(
-          "No se pudieron cargar las especies. Intenta de nuevo más tarde.",
+          "No se pudieron cargar las mascotas. Intenta de nuevo más tarde.",
         );
       } finally {
         setLoading(false);
       }
     };
-    fetchSpecies();
-    setCurrentUser(JSON.parse(localStorage.getItem("currentUser")));
+    fetchPets();
   }, []);
 
-  // Manejar cambio de especie
-  const handleSpeciesChange = async (e) => {
-    const speciesId = e.target.value;
-    setSelectedSpecies(speciesId);
+  // Manejar cambio de mascota
+  const handlePetChange = async (e) => {
+    const petId = e.target.value;
+    const pet = pets.find((p) => p.id == petId);
 
+    setSelectedPet(petId);
     setSelectedService("");
     setServices([]);
     setDynamicFields([]);
-    setFormValues({});
+    setFormValues([]);
     setSuccess("");
 
-    if (speciesId) {
+    if (petId) {
       setLoading(true);
       try {
-        const res = await getServicesBySpecie(speciesId);
+        const res = await getServicesBySpecie(pet.specieId);
         if (res instanceof Error) {
           throw res;
         }
@@ -110,20 +107,20 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
     const serviceId = e.target.value;
     setSelectedService(serviceId);
     setDynamicFields([]);
-    setFormValues({});
+    setFormValues([]);
     setSuccess("");
 
     if (serviceId) {
       const service = services.find(
-        (s) => s.IdServicio === parseInt(serviceId),
+        (s) => s.id === parseInt(serviceId),
       );
       if (service) {
-        const groupedFields = groupFields(service.Campos);
+        const groupedFields = groupFields(service.fields);
         setDynamicFields(groupedFields);
         const initialValues = groupedFields.reduce(
           (acc, field) => ({
             ...acc,
-            [field.NombreCampo]: field.TipoCampo === "boolean" ? false : "",
+            [field.name]: field.type === "boolean" ? false : "",
           }),
           {},
         );
@@ -146,12 +143,12 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
     let valid = true;
     const errors = {};
     dynamicFields.forEach((field) => {
-      if (field.EsRequerido && !formValues[field.NombreCampo]) {
+      if (field.isRequired && !formValues[field.name]) {
         valid = false;
-        errors[field.NombreCampo] = `${field.NombreCampo} es requerido.`;
+        errors[field.name] = `${field.name} es requerido.`;
       }
     });
-    // Aquí podrías manejar los errores, por ejemplo, guardándolos en un estado.
+
     return valid;
   };
 
@@ -164,31 +161,31 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
     }
     setError("");
     setLoading(true);
+    
     const appointmentData = {
-      userId: currentUser.Id,
-      speciesId: selectedSpecies,
-      serviceId: selectedService,
-      fields: formValues,
+      userId: userId,
+      petId: parseInt(selectedPet),
+      serviceId: parseInt(selectedService),
+      date: new Date(),
+      details: dynamicFields.map((field) => ({
+        fieldId: field.id,
+        fieldValue: formValues[field.name],
+      })),
     };
-    console.log("Cita enviada:", appointmentData);
 
     try {
-      const res = await createAppointment(appointmentData);
-      if (res instanceof Error) {
-        throw res;
-      }
-      console.log("Cita creada exitosamente");
+      await createAppointment(appointmentData);
+      
       setSuccess("¡Cita agendada con éxito!");
 
       if (onAppointmentCreated) {
         onAppointmentCreated();
       }
 
-      setSelectedSpecies("");
       setSelectedService("");
       setServices([]);
       setDynamicFields([]);
-      setFormValues({});
+      setFormValues([]);
     } catch (error) {
       console.error("Error al crear la cita:", error);
       setError("No se pudo crear la cita. Intenta de nuevo más tarde.");
@@ -205,73 +202,74 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
           <Form.Group
             as={Row}
             className="mb-3"
-            controlId={`form-${field.NombreCampo}`}
-            key={field.IdCampo}
+            controlId={`form-${field.name}`}
+            key={field.id}
           >
+            {console.log(field)}
             <Form.Label column sm={4} className="text-sm-end">
-              {field.NombreCampo}{" "}
-              {field.EsRequerido && <span className="text-danger">*</span>}
+              {field.name}{" "}
+              {field.isRequired && <span className="text-danger">*</span>}
             </Form.Label>
             <Col sm={8}>
-              {field.TipoCampo === "select" ? (
+              {field.type === "select" ? (
                 <Form.Select
-                  name={field.NombreCampo}
-                  value={formValues[field.NombreCampo] || ""}
+                  name={field.name}
+                  value={formValues[field.name] || ""}
                   onChange={handleFieldChange}
-                  required={field.EsRequerido}
+                  required={field.isRequired}
                 >
                   <option value="">Seleccione una opción...</option>
-                  {field.options.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
+                  {field.options.map((option) => (
+                    <option key={option?.id} value={option?.id}>
+                      {option?.value}
                     </option>
                   ))}
                 </Form.Select>
-              ) : field.TipoCampo === "boolean" ? (
+              ) : field.type === "boolean" ? (
                 <div className="d-flex gap-3 align-items-center pt-2">
                   <Form.Check
                     type="radio"
                     label="Sí"
-                    name={field.NombreCampo}
-                    checked={formValues[field.NombreCampo] === true}
+                    name={field.name}
+                    checked={formValues[field.name] === true}
                     onChange={() =>
                       handleFieldChange({
                         target: {
-                          name: field.NombreCampo,
+                          name: field.name,
                           value: true,
                           type: "radio",
                         },
                       })
                     }
-                    required={field.EsRequerido}
-                    id={`radio-yes-${field.IdCampo}`}
+                    required={field.isRequired}
+                    id={`radio-yes-${field.id}`}
                   />
                   <Form.Check
                     type="radio"
                     label="No"
-                    name={field.NombreCampo}
-                    checked={formValues[field.NombreCampo] === false}
+                    name={field.name}
+                    checked={formValues[field.name] === false}
                     onChange={() =>
                       handleFieldChange({
                         target: {
-                          name: field.NombreCampo,
+                          name: field.name,
                           value: false,
                           type: "radio",
                         },
                       })
                     }
-                    required={field.EsRequerido}
-                    id={`radio-no-${field.IdCampo}`}
+                    required={field.isRequired}
+                    id={`radio-no-${field.id}`}
                   />
                 </div>
               ) : (
                 <Form.Control
-                  type={field.TipoCampo}
-                  name={field.NombreCampo}
-                  value={formValues[field.NombreCampo] || ""}
+                  type={field.type}
+                  name={field.name}
+                  value={formValues[field.name] || ""}
                   onChange={handleFieldChange}
-                  required={field.EsRequerido}
-                  placeholder={`Ingrese ${field.NombreCampo.toLowerCase()}`}
+                  required={field.isRequired}
+                  placeholder={`Ingrese ${field.name.toLowerCase()}`}
                 />
               )}
             </Col>
@@ -281,9 +279,7 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
     );
 
   return (
-    <Container className="py-4">
-      <Row className="justify-content-center">
-        <Col md={8} lg={6}>
+    <Container className="py-4 col-md-6 col-lg-6">
           <Card className="p-4 shadow-sm">
             <Card.Body>
               <Card.Title className="text-center mb-4 fs-4">
@@ -299,23 +295,23 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
                   {error && <Alert variant="danger">{error}</Alert>}
                   {success && <Alert variant="success">{success}</Alert>}
 
-                  <Form.Group className="mb-3" controlId="speciesSelect">
-                    <Form.Label>Especie</Form.Label>
+                  <Form.Group className="mb-3" controlId="petSelect">
+                    <Form.Label>Mascota</Form.Label>
                     <Form.Select
-                      value={selectedSpecies}
-                      onChange={handleSpeciesChange}
+                      value={selectedPet}
+                      onChange={handlePetChange}
                       required
                     >
-                      <option value="">Seleccione una especie</option>
-                      {species.map((sp) => (
-                        <option key={sp.id} value={sp.id}>
-                          {sp.name}
+                      <option value="">Seleccione una mascota</option>
+                      {pets.map((pet) => (
+                        <option key={pet.id} value={pet.id}>
+                          {pet.name}
                         </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
 
-                  {selectedSpecies && (
+                  {selectedPet && (
                     <Form.Group className="mb-3" controlId="serviceSelect">
                       <Form.Label>Servicio</Form.Label>
                       <Form.Select
@@ -325,8 +321,8 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
                       >
                         <option value="">Seleccione un servicio</option>
                         {services.map((s) => (
-                          <option key={s.IdServicio} value={s.IdServicio}>
-                            {s.Nombre}
+                          <option key={s.id} value={s.id}>
+                            {s.name}
                           </option>
                         ))}
                       </Form.Select>
@@ -336,17 +332,17 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
                   {currentServiceDetails && (
                     <Card className="mb-4">
                       <Card.Body>
-                        <Card.Title>{currentServiceDetails.Nombre}</Card.Title>
+                        <Card.Title>{currentServiceDetails.name}</Card.Title>
                         <Card.Text>
                           <p className="mb-1">
-                            {currentServiceDetails.Descripcion}
+                            {currentServiceDetails.description}
                           </p>
                           <p className="mb-1">
-                            Duración: {currentServiceDetails.DuracionMinutos}{" "}
+                            Duración: {currentServiceDetails.durationMinutes}{" "}
                             minutos
                           </p>
                           <p className="mb-0">
-                            Precio: ${currentServiceDetails.Precio}
+                            Precio: ${currentServiceDetails.price}
                           </p>
                         </Card.Text>
                       </Card.Body>
@@ -366,14 +362,13 @@ const CreateAppointmentForm = ({ onAppointmentCreated }) => {
               )}
             </Card.Body>
           </Card>
-        </Col>
-      </Row>
     </Container>
   );
 };
 
 CreateAppointmentForm.propTypes = {
-  onAppointmentCreated: PropTypes.func.isRequired
+  userId: PropTypes.number,
+  onAppointmentCreated: PropTypes.func.isRequired,
 };
 
 export default CreateAppointmentForm;

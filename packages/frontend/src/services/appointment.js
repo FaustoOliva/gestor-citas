@@ -22,6 +22,12 @@ export async function getAppointmentsByPetId(petId) {
   });
 }
 
+export async function getAppointmentsByUserId(userId) {
+  return apiCall(`/appointments/users/${userId}`, {
+    method: "GET",
+  });
+}
+
 export async function getAppointments() {
   return apiCall("/appointments", {
     method: "GET",

@@ -62,38 +62,38 @@ export class FrontService {
       result.recordset.forEach((row) => {
         if (!servicios[row.id]) {
           servicios[row.id] = {
-            IdServicio: row.id,
-            Nombre: row.name,
-            Descripcion: row.description,
-            DuracionMinutos: row.duration,
-            Precio: row.price,
-            Campos: {}, // Usamos un objeto para evitar campos duplicados
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            durationMinutes: row.duration,
+            price: row.price,
+            fields: {}, // Usamos un objeto para evitar campos duplicados
           };
         }
 
         // Agrupa los campos dentro de cada servicio
-        if (!servicios[row.id].Campos[row.fieldId]) {
-          servicios[row.id].Campos[row.fieldId] = {
-            IdCampo: row.fieldId,
-            NombreCampo: row.fieldName,
-            TipoCampo: row.fieldType,
-            EsRequerido: row.IsRequired,
-            Opciones: [], // Array para las opciones del campo
+        if (!servicios[row.id].fields[row.fieldId]) {
+          servicios[row.id].fields[row.fieldId] = {
+            id: row.fieldId,
+            name: row.fieldName,
+            type: row.fieldType,
+            isRequired: row.IsRequired,
+            options: [], // Array para las opciones del campo
           };
         }
 
         // Agrega las opciones al campo correspondiente si existen
         if (row.optionId) {
-          servicios[row.id].Campos[row.fieldId].Opciones.push({
-            IdOpcion: row.optionId,
-            ValorOpcion: row.optionValue,
+          servicios[row.id].fields[row.fieldId].options.push({
+            id: row.optionId,
+            value: row.optionValue,
           });
         }
       });
 
       // Convierte el objeto anidado en un array para el resultado final
       const resultadoFinal = Object.values(servicios).map((servicio) => {
-        servicio.Campos = Object.values(servicio.Campos);
+        servicio.fields = Object.values(servicio.fields);
         return servicio;
       });
 
