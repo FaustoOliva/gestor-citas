@@ -29,6 +29,26 @@ export class FrontService {
     }
   };
 
+  getServices = async () => {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request().query(`
+          SELECT 
+            Service_Id AS id, 
+            Service_Name AS name 
+          FROM ${ServiceTable} 
+          ORDER BY Service_Id`);
+      if (result.recordset.length === 0) {
+        return [];
+      }
+      return result.recordset;
+    } catch (error) {
+      console.error("Error buscando servicios:", error);
+      return new Error("Error buscando servicios");
+    }
+  };
+
+
   getServicesBySpecie = async (specieId) => {
     try {
       const pool = await poolPromise;
