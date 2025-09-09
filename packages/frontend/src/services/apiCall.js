@@ -1,4 +1,4 @@
-const host = process.env.REACT_APP_API_URL;
+const host = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 export const apiCall = async (endpoint, options) => {
   const response = await fetch(`${host}${endpoint}`, options);

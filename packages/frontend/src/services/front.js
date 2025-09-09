@@ -11,3 +11,9 @@ export async function getServicesBySpecie(specieId) {
     method: "GET",
   });
 }
+
+export async function getServices() {
+  return apiCall("/front/services", {
+    method: "GET",
+  });
+}
