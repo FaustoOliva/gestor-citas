@@ -17,3 +17,9 @@ export async function getServices() {
     method: "GET",
   });
 }
+
+export async function getDashboardStats() {
+  return apiCall("/front/dashboard/stats", {
+    method: "GET",
+  });
+}

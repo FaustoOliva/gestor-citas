@@ -8,6 +8,10 @@ const FieldTable = process.env.DB_FIELD_TABLE;
 const FieldsOptionTable = process.env.DB_FIELDS_OPTION_TABLE;
 const ServiceFieldTable = process.env.DB_SERVICE_FIELD_TABLE;
 const SpecieServiceTable = process.env.DB_SPECIE_SERVICE_TABLE;
+const PetTable = process.env.DB_PET_TABLE;
+const AppointmentTable = process.env.DB_APPOINTMENT_TABLE;
+const StatusTable = process.env.DB_STATUS_TABLE;
+const UserTable = process.env.DB_USER_TABLE;
 
 export class FrontService {
   getSpecies = async () => {
@@ -47,7 +51,6 @@ export class FrontService {
       return new Error("Error buscando servicios");
     }
   };
-
 
   getServicesBySpecie = async (specieId) => {
     try {
@@ -121,6 +124,51 @@ export class FrontService {
     } catch (error) {
       console.error("Error buscando servicios de especie:", error);
       throw new Error("Error buscando servicios de especie");
+    }
+  };
+
+  getDashboardStats = async () => {
+    try {
+      const pool = await poolPromise;
+
+      const totalUsers = await pool.request().query(
+        `SELECT COUNT(*) AS totalUsers FROM ${UserTable}
+        WHERE User_IsEmailVerified = 1 AND User_IsAdmin = 0`
+      );
+
+      const totalPetsBySpecie = await pool.request().query(
+        `SELECT Sp.Specie_Name AS Specie, COUNT(P.Pet_Id) AS Total
+        FROM ${PetTable} P
+        JOIN ${SpecieTable} Sp ON P.Pet_SpecieId = Sp.Specie_Id
+        GROUP BY Sp.Specie_Name
+        ORDER BY Total DESC;`
+      );
+
+      const totalAppointmentsByStatus = await pool.request().query(
+        `SELECT S.Status_Description AS Status, COUNT(A.Appointment_Id) AS Total
+        FROM ${AppointmentTable} A
+        JOIN ${StatusTable} S ON A.Appointment_StatusId = S.Status_Id
+        GROUP BY S.Status_Description, S.Status_Id
+        ORDER BY S.Status_Id;`
+      );
+
+      const totalAppointmentsByService = await pool.request().query(
+        `SELECT S.Service_Name AS Service, COUNT(A.Appointment_Id) AS Total
+          FROM ${AppointmentTable} A
+          JOIN ${ServiceTable} S ON A.Appointment_ServiceId = S.Service_Id
+          GROUP BY S.Service_Name
+          ORDER BY Total DESC;`
+      );
+
+      return {
+        totalUsers: totalUsers.recordset[0].totalUsers,
+        totalPetsBySpecie: totalPetsBySpecie.recordset,
+        totalAppointmentsByStatus: totalAppointmentsByStatus.recordset,
+        totalAppointmentsByService: totalAppointmentsByService.recordset,
+      };
+    } catch (error) {
+      console.error("Error obteniendo estadísticas del dashboard:", error);
+      throw new Error("Error obteniendo estadísticas del dashboard");
     }
   };
 }

@@ -4,11 +4,67 @@ import { Card, Form, Row, Col, Button } from "react-bootstrap";
 import { getSpecies, getServices } from "../../services/front.js";
 
 export const filterAppointments = (appointments, filters) => {
-  // Lógica de filtrado
-  if (filters.date) {
-    appointments = appointments.filter(
-      (app) => app?.date.slice(0, 10) == filters.date
-    );
+  // Filtrado por fecha
+  if (filters.dateFilterType) {
+    const today = new Date();
+    let start, end;
+    switch (filters.dateFilterType) {
+      case "today":
+        start = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate()
+        );
+        end = new Date(start);
+        end.setDate(end.getDate() + 1);
+        break;
+      case "yesterday":
+        start = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 1
+        );
+        end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        break;
+      case "last7":
+        start = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 6
+        );
+        end = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() + 1
+        );
+        break;
+      case "thisWeek":
+        const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1; // Lunes = 0
+        start = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - dayOfWeek
+        );
+        end = new Date(start);
+        end.setDate(end.getDate() + 7);
+        break;
+      case "custom":
+        if (filters.startDate && filters.endDate) {
+          start = new Date(filters.startDate);
+          end = new Date(filters.endDate);
+          end.setDate(end.getDate() + 1); // incluir el día final
+        }
+        break;
+      default:
+        start = null;
+        end = null;
+    }
+    if (start && end) {
+      appointments = appointments.filter((app) => {
+        const appDate = new Date(app?.date);
+        return appDate >= start && appDate < end;
+      });
+    }
   }
   if (filters.status) {
     appointments = appointments.filter((app) => app?.status == filters.status);
@@ -24,18 +80,24 @@ export const filterAppointments = (appointments, filters) => {
       (app) => app?.pet.specieName == filters.species
     );
   }
-  if (filters.service) {
+  if (filters.services) {
     appointments = appointments.filter(
-      (app) => app?.service.name == filters.service
+      (app) => app?.service.name == filters.services
     );
   }
 
-  return appointments;
+  return appointments.filter(
+    (app) =>
+      (!filters.status || app.status === filters.status) &&
+      (!filters.species || app.speciesName === filters.species) &&
+      (!filters.services || app.serviceName === filters.services)
+  );
 };
 
-export const Filters = ({ filters, onFilterChange }) => {
+export const Filters = ({ filters, onFilterChange, onApplyFilters }) => {
   const [species, setSpecies] = useState([]);
   const [services, setServices] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -165,6 +227,11 @@ export const Filters = ({ filters, onFilterChange }) => {
               </Form.Group>
             </Col>
           </Row>
+          <div className="d-grid gap-2">
+            <Button variant="primary" onClick={onApplyFilters}>
+              Aplicar Filtros
+            </Button>
+          </div>
         </Form>
       </Card.Body>
     </Card>
@@ -174,4 +241,5 @@ export const Filters = ({ filters, onFilterChange }) => {
 Filters.propTypes = {
   filters: PropTypes.object.isRequired,
   onFilterChange: PropTypes.func.isRequired,
+  onApplyFilters: PropTypes.func.isRequired
 };

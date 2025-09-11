@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Container, Spinner, Alert } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Spinner, Alert, Button, Card  } from "react-bootstrap";
 import { getAppointments } from "../services/appointment.js";
 import DashboardAdmin from "../components/admin/DashboardAdmin.jsx";
 import DeleteAppointmentModal from "../components/admin/DeleteApppointmentModal.jsx";
@@ -13,13 +13,15 @@ const AdminPage = () => {
   const [filters, setFilters] = useState({ date: "", status: "", search: "" });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+  const [showTable, setShowTable] = useState(false);
 
-  const fetchAppointments = async () => {
+ const fetchAppointments = async () => {
+    setShowTable(true);
     setLoading(true);
     try {
-      var data = await getAppointments();
-      data = filterAppointments(data, filters);
-      setAppointments(data);
+      const data = await getAppointments();
+      const filteredData = filterAppointments(data, filters);
+      setAppointments(filteredData);
     } catch (err) {
       setError("Error al cargar las citas.");
       console.error(err);
@@ -27,10 +29,6 @@ const AdminPage = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchAppointments();
-  }, [filters]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -73,22 +71,33 @@ const AdminPage = () => {
     <Container fluid className="py-4">
       <h3 className="mb-4">Panel de Administración de Citas</h3>
 
-      {loading && (
+      <Filters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onApplyFilters={fetchAppointments}
+      />
+
+       {loading && (
         <div className="text-center">
           <Spinner animation="border" />
         </div>
       )}
+
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <Filters filters={filters} onFilterChange={handleFilterChange} />
+      {showTable && !loading && (
+        <Card className="mt-4 shadow-sm">
+          <Card.Body>
+            <Card.Title>Resultados de la Búsqueda</Card.Title>
+            <AppsTable
+              appointments={appointments}
+              handleStatusUpdate={handleStatusUpdate}
+              confirmDelete={confirmDelete}
+            />
+          </Card.Body>
+        </Card>
+      )}
 
-      <AppsTable
-        appointments={appointments}
-        handleStatusUpdate={handleStatusUpdate}
-        confirmDelete={confirmDelete}
-      />
-
-      {/* Modal de confirmación de eliminación */}
       <DeleteAppointmentModal
         showDeleteModal={showDeleteModal}
         setShowDeleteModal={setShowDeleteModal}
@@ -96,7 +105,8 @@ const AdminPage = () => {
         handleDelete={handleDelete}
       />
 
-      <DashboardAdmin listaCitas={appointments} />
+      <hr />
+      <DashboardAdmin />
     </Container>
   );
 };

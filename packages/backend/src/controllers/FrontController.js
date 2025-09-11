@@ -36,5 +36,15 @@ router.get("/services", async (req, res) => {
   }
 });
 
+router.get("/dashboard/stats", async (req, res) => {
+  try {
+    const stats = await frontService.getDashboardStats();
+    res.status(200).json(stats);
+  }
+  catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 export default router;
