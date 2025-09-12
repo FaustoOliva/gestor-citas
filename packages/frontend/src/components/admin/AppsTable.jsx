@@ -2,11 +2,7 @@ import React from "react";
 import { Table, Button, Badge } from "react-bootstrap";
 import PropTypes from "prop-types";
 
-const AppsTable = ({
-  appointments,
-  handleStatusUpdate,
-  confirmDelete,
-}) => {
+const AppsTable = ({ appointments, confirmDelete, handleViewDetails }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     if (isNaN(date)) return dateString;
@@ -16,7 +12,7 @@ const AppsTable = ({
     return `${day}/${month}/${year}`;
   };
 
-    const getStatusVariant = (status) => {
+  const getStatusVariant = (status) => {
     switch (status) {
       case "Pendiente":
         return "warning";
@@ -63,16 +59,9 @@ const AppsTable = ({
                   <Button
                     variant="outline-primary"
                     size="sm"
-                    onClick={() => handleStatusUpdate(app.id, "Confirmada")}
+                    onClick={() => handleViewDetails(app)}
                   >
-                    Ver
-                  </Button>
-                  <Button
-                    variant="outline-success"
-                    size="sm"
-                    onClick={() => handleStatusUpdate(app.id, "Confirmada")}
-                  >
-                    Confirmar
+                    Ver Detalles
                   </Button>
                   <Button
                     variant="outline-danger"
@@ -99,8 +88,8 @@ const AppsTable = ({
 
 AppsTable.propTypes = {
   appointments: PropTypes.array.isRequired,
-  handleStatusUpdate: PropTypes.func.isRequired,
   confirmDelete: PropTypes.func.isRequired,
+  handleViewDetails: PropTypes.func.isRequired,
 };
 
 export default AppsTable;

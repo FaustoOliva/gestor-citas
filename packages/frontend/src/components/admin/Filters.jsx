@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Card, Form, Row, Col, Button } from "react-bootstrap";
+import { Card, Form, Row, Col, Button, Container } from "react-bootstrap";
 import { getSpecies, getServices } from "../../services/front.js";
 
 export const filterAppointments = (appointments, filters) => {
@@ -86,12 +86,7 @@ export const filterAppointments = (appointments, filters) => {
     );
   }
 
-  return appointments.filter(
-    (app) =>
-      (!filters.status || app.status === filters.status) &&
-      (!filters.species || app.speciesName === filters.species) &&
-      (!filters.services || app.serviceName === filters.services)
-  );
+  return appointments;
 };
 
 export const Filters = ({ filters, onFilterChange, onApplyFilters }) => {
@@ -114,11 +109,12 @@ export const Filters = ({ filters, onFilterChange, onApplyFilters }) => {
   }, []);
 
   return (
-    <Card className="mb-4 shadow-sm">
-      <Card.Body>
-        <Card.Title>Filtros</Card.Title>
-        <Form>
-          <Row>
+    <Container className="d-flex justify-content-center">
+      <Card className="mb-4 shadow-sm">
+        <Card.Body>
+          <Card.Title>Filtros</Card.Title>
+          <Form>
+            <Row>
             <Col md={4}>
               <Form.Group className="mb-3">
                 <Form.Label>Filtrar por fecha</Form.Label>
@@ -199,7 +195,6 @@ export const Filters = ({ filters, onFilterChange, onApplyFilters }) => {
                   onChange={onFilterChange}
                 >
                   <option value="">Seleccionar especie...</option>
-                  {/* Aquí puedes mapear las especies obtenidas desde el backend */}
                   {species.map((specie) => (
                     <option key={specie.id} value={specie.name}>
                       {specie.name}
@@ -217,7 +212,6 @@ export const Filters = ({ filters, onFilterChange, onApplyFilters }) => {
                   onChange={onFilterChange}
                 >
                   <option value="">Seleccionar servicio...</option>
-                  {/* Aquí puedes mapear los servicios obtenidos desde el backend */}
                   {services.map((service) => (
                     <option key={service.id} value={service.name}>
                       {service.name}
@@ -235,6 +229,7 @@ export const Filters = ({ filters, onFilterChange, onApplyFilters }) => {
         </Form>
       </Card.Body>
     </Card>
+    </Container>
   );
 };
 

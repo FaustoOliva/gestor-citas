@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Container, Spinner, Alert, Button, Card  } from "react-bootstrap";
+import { Container, Spinner, Alert, Button, Card } from "react-bootstrap";
 import { getAppointments } from "../services/appointment.js";
 import DashboardAdmin from "../components/admin/DashboardAdmin.jsx";
 import DeleteAppointmentModal from "../components/admin/DeleteApppointmentModal.jsx";
+import DetailsAppModal from "../components/admin/DetailsAppModal.jsx";
 import AppsTable from "../components/admin/AppsTable.jsx";
-import {Filters, filterAppointments} from "../components/admin/Filters.jsx";
+import { Filters, filterAppointments } from "../components/admin/Filters.jsx";
 
 const AdminPage = () => {
   const [appointments, setAppointments] = useState([]);
@@ -14,10 +15,14 @@ const AdminPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
   const [showTable, setShowTable] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [appointmentDetailsId, setAppointmentDetailsId] = useState(null);
 
- const fetchAppointments = async () => {
+  const fetchAppointments = async () => {
     setShowTable(true);
     setLoading(true);
+    const minLoadingTime = 600; // ms
+    const startTime = Date.now();
     try {
       const data = await getAppointments();
       const filteredData = filterAppointments(data, filters);
@@ -26,7 +31,12 @@ const AdminPage = () => {
       setError("Error al cargar las citas.");
       console.error(err);
     } finally {
-      setLoading(false);
+      const elapsed = Date.now() - startTime;
+      if (elapsed < minLoadingTime) {
+        setTimeout(() => setLoading(false), minLoadingTime - elapsed);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
@@ -35,36 +45,15 @@ const AdminPage = () => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleStatusUpdate = async (id, newStatus) => {
-    setLoading(true);
-    try {
-      //await updateAppointmentStatus(id, newStatus);
-      fetchAppointments(); // Recargar la lista para reflejar el cambio
-    } catch (err) {
-      setError("Error al actualizar el estado de la cita.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const confirmDelete = (appointment) => {
     setAppointmentToDelete(appointment);
     setShowDeleteModal(true);
   };
 
-  const handleDelete = async () => {
-    if (!appointmentToDelete) return;
-    setLoading(true);
-    setShowDeleteModal(false);
-    try {
-      //await deleteAppointment(appointmentToDelete.id);
-      setAppointmentToDelete(null);
-      fetchAppointments(); // Recargar la lista
-    } catch (err) {
-      setError("Error al eliminar la cita.");
-    } finally {
-      setLoading(false);
-    }
+  const handleViewDetails = (appointment) => {
+    console.log("Viewing details for appointment:", appointment.id);
+    setAppointmentDetailsId(appointment.id);
+    setShowDetailsModal(true);
   };
 
   return (
@@ -77,7 +66,7 @@ const AdminPage = () => {
         onApplyFilters={fetchAppointments}
       />
 
-       {loading && (
+      {loading && (
         <div className="text-center">
           <Spinner animation="border" />
         </div>
@@ -91,8 +80,8 @@ const AdminPage = () => {
             <Card.Title>Resultados de la Búsqueda</Card.Title>
             <AppsTable
               appointments={appointments}
-              handleStatusUpdate={handleStatusUpdate}
               confirmDelete={confirmDelete}
+              handleViewDetails={handleViewDetails}
             />
           </Card.Body>
         </Card>
@@ -102,7 +91,12 @@ const AdminPage = () => {
         showDeleteModal={showDeleteModal}
         setShowDeleteModal={setShowDeleteModal}
         appointmentToDelete={appointmentToDelete}
-        handleDelete={handleDelete}
+      />
+
+      <DetailsAppModal
+        showDetailsModal={showDetailsModal}
+        setShowDetailsModal={setShowDetailsModal}
+        appointmentDetailsId={appointmentDetailsId}
       />
 
       <hr />

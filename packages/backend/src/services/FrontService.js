@@ -138,8 +138,8 @@ export class FrontService {
 
       const totalPetsBySpecie = await pool.request().query(
         `SELECT Sp.Specie_Name AS Specie, COUNT(P.Pet_Id) AS Total
-        FROM ${PetTable} P
-        JOIN ${SpecieTable} Sp ON P.Pet_SpecieId = Sp.Specie_Id
+        FROM ${SpecieTable} Sp 
+        LEFT JOIN ${PetTable} P ON P.Pet_SpecieId = Sp.Specie_Id
         GROUP BY Sp.Specie_Name
         ORDER BY Total DESC;`
       );
